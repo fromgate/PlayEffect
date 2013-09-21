@@ -1,5 +1,6 @@
 package me.fromgate.playeffect.effect;
 
+import me.fromgate.playeffect.Util;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 
@@ -30,8 +31,13 @@ public class EffectSong extends BasicEffect {
         loc.getWorld().playEffect(loc, Effect.RECORD_PLAY, st.getId());
     }
 
+    @Override
+    public long getRepeatTick(){
+        return Util.timeToTicks(st.getLength());
+    }
+    
     enum SongType{
-        DISC13 (2256,178000L), // 2:58  - Было 177000
+        DISC13 (2256,178000L), // 2:58  - Было 177000 
         CAT(2257,185000L),     // 3:05  - Было 192000  
         BLOCKS(2258,345000L),  // 5:45  - Было 352000 
         CHIRP(2259,185000L),   // 3:05  - Было 186000  

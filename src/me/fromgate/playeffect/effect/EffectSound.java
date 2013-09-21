@@ -34,33 +34,3 @@ public class EffectSound extends BasicEffect {
 
 }
 
-
-/*
-public static void soundPlay (Location loc, Map<String,String> params){
-if (params.isEmpty()) return;
-String sndstr = "";
-String strvolume ="1";
-String strpitch = "1";
-float pitch = 1;
-float volume = 1;
-if (params.containsKey("param")){
-    String param = Util.getParam(params, "param", "");
-    if (param.isEmpty()) return;
-    if (param.contains("/")){
-        String[] prm = param.split("/");
-        if (prm.length>1){
-            sndstr = prm[0];
-            strvolume = prm[1];
-            if (prm.length>2) strpitch = prm[2];
-        }
-    } else sndstr = param;
-    if (strvolume.matches("[0-9]+-?\\.[0-9]*")) volume = Float.parseFloat(strvolume);
-    if (strpitch.matches("[0-9]+-?\\.[0-9]*")) pitch = Float.parseFloat(strpitch);            
-} else {
-    sndstr = Util.getParam(params, "type", "");
-    pitch = Util.getParam(params, "pitch", 1.0f);
-    volume = Util.getParam(params, "volume", 1.0f);
-}
-Sound sound = getSoundStr (sndstr);
-loc.getWorld().playSound(loc, sound, volume, pitch);
-}*/

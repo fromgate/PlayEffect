@@ -10,38 +10,31 @@ import org.bukkit.entity.Player;
 import me.fromgate.playeffect.effect.BasicEffect;
 
 public class EffectQueue {
-    static int effectpertick = 100;
-    static List<BasicEffect> queue = new ArrayList<BasicEffect>();
+    private static List<BasicEffect> queue = new ArrayList<BasicEffect>();
     
     public static void addToQueue (BasicEffect effect){
         if (effect==null) return;
-        if (isPlayersAround(effect.getLocation())) queue.add(effect);
+        if (isPlayersAround(effect.getLocation(),effect.getType().getVisibilityDistance())) queue.add(effect);
     }
     
-    public static void init(int ept){
-        effectpertick = ept;
-        Bukkit.getScheduler().runTaskTimer(PlayEffect.instance, new Runnable(){
-
+    public static void init(final int ept, final int ttime){
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(PlayEffect.instance, new Runnable(){
             @Override
             public void run() {
                 if (queue.isEmpty()) return;
-                for (int i = 0; i<Math.min(effectpertick, queue.size());i++){
+                for (int i = 0; i<Math.min(ept, queue.size());i++){
                     queue.get(0).playEffect();
                     queue.remove(0);
                 }
             }
-        }, 1, 1);
+        }, 20, ttime);
     }
-
     
-    
-    public static boolean isPlayersAround(Location loc){
+    public static boolean isPlayersAround(Location loc, int distance){
         if (loc==null) return false;
         if (!loc.getWorld().getChunkAt(loc.getBlockX()>>4, loc.getBlockZ()>>4).isLoaded()) return false;
-        //Long time = System.currentTimeMillis();
         for (Player p : Bukkit.getOnlinePlayers())
-            if (loc.getWorld().equals(loc.getWorld())&&(loc.distance(p.getLocation())<=PlayEffect.instance.effect_visible_distance)) return true;
+            if (loc.getWorld().equals(loc.getWorld())&&(loc.distance(p.getLocation())<=distance)) return true;
         return false;
     }
-
 }

@@ -14,6 +14,7 @@ public class EffectParticles extends BasicEffect {
     private int number = 10;
     
     @Override
+    @SuppressWarnings("deprecation")
     public void onInit(){
         effectname = getParam ("effectname","cloud");
         if (effectname.equalsIgnoreCase("tilecrack_")) effectname = effectname + PlayEffect.instance.u.parseItemStack(getParam("item","GLASS:0")).getTypeId()+"_"+
@@ -25,6 +26,8 @@ public class EffectParticles extends BasicEffect {
         offsetY = getParam("offsetY",getParam("offset",0f));
         offsetZ = getParam("offsetZ",getParam("offset",0f));
     }
+    
+   
     
     @Override
     protected void play(Location l) {

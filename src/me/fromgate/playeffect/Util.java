@@ -6,10 +6,19 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 
-public class Util extends FGUtilCore  {
+public class Util extends FGUtilCore implements Listener {
     PlayEffect plg;
 
     public Util(PlayEffect plugin, boolean vcheck, boolean savelng, String language, String devbukkitname, String version_name, String plgcmd, String px){
@@ -19,18 +28,21 @@ public class Util extends FGUtilCore  {
         if (savelng) this.SaveMSG();
     }
 
-
-
     public void InitCmd(){
         cmds.clear();
         cmdlist = "";
         addCmd("help", "config", "hlp_thishelp","&3/playeffect help [page]",'b');
+        addCmd("list", "config", "hlp_list","&3/playeffect list [page]",'b');
+        addCmd("info", "config", "hlp_info","&3/playeffect info <effect id | number>",'b');
+        addCmd("remove", "config", "hlp_remove","&3/playeffect remove <effect number>",'b');
         addCmd("test", "config", "hlp_test","&3/playeffect test",'b');
         addCmd("set", "config", "hlp_set","&3/playeffect set <effect> [param]",'b');
+        addCmd("wand", "wand", "hlp_wand","&3/playeffect wand <effect> [param]",'b');
+        
         for (VisualEffect ve : VisualEffect.values()){
             if (ve == VisualEffect.BASIC) continue;
             String ven = ve.name().toLowerCase();
-            addCmd(ven, ven, "hlp_"+ven,"&3/playeffect "+ven+" [location] [parameter:value]",'b');
+            addCmd(ven, ven, "hlp_"+ven,"&3/playeffect "+ven+" [parameters]",'b');
         }
     }
 
@@ -140,6 +152,34 @@ public class Util extends FGUtilCore  {
             for (int z = Math.min(loc1.getBlockZ(), loc2.getBlockZ()); z<=Math.max(loc1.getBlockZ(), loc2.getBlockZ());z++)
                 plain.add(new Location (loc1.getWorld(), x, loc1.getBlockY(), z));
         return plain;
+    }
+    
+    public static List<Location> buildCuboid(Location loc1, Location loc2, boolean land){
+        List<Location> cube = new ArrayList<Location>();
+        if (loc1 == null) return cube;
+        if (loc2 == null) return cube;
+
+        for (int x = Math.min(loc1.getBlockX(), loc2.getBlockX()); x<=Math.max(loc1.getBlockX(), loc2.getBlockX());x++)
+            for (int z = Math.min(loc1.getBlockZ(), loc2.getBlockZ()); z<=Math.max(loc1.getBlockZ(), loc2.getBlockZ());z++)
+                for (int y = Math.min(loc1.getBlockY(), loc2.getBlockY()); y<=Math.max(loc1.getBlockY(), loc2.getBlockY());y++)
+
+        
+        /*Location min = new Location (loc1.getWorld(), Math.min(loc1.getBlockX(), loc2.getBlockX()),
+                Math.min(loc1.getBlockY(), loc2.getBlockY()),Math.min(loc1.getBlockZ(), loc2.getBlockZ()));
+        Location max = new Location (loc1.getWorld(), Math.max(loc1.getBlockX(), loc2.getBlockX()),
+                Math.max(loc1.getBlockY(), loc2.getBlockY()),Math.max(loc1.getBlockZ(), loc2.getBlockZ()));
+        for (int x = min.getBlockX(); x<=max.getBlockX();x++)
+                for (int z = min.getBlockZ(); x<=max.getBlockZ();z++)
+                    for (int y = min.getBlockY(); y<=max.getBlockY();y++) */
+                    
+                    
+                    {
+                    Block b = loc1.getWorld().getBlockAt(x, y, z); 
+                    if (b.getType()!=Material.AIR) continue;
+                    if (land&&b.getRelative(BlockFace.DOWN).getType()==Material.AIR) continue;
+                    cube.add(b.getLocation());
+                }
+        return cube;
     }
     
     public static List<Location> buildLine (Location loc1, Location loc2){
@@ -288,6 +328,19 @@ public class Util extends FGUtilCore  {
         return (long) ((hh*3600000)+(mm*60000)+(ss*1000)+(tt*50)+ms);
     }
 
+
+
+    
+    @EventHandler(priority=EventPriority.NORMAL)
+    public void onPlayerInteract (PlayerInteractEvent event){
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        Player p = event.getPlayer();
+        if (!Wand.hasWand(p)) return;
+        if (p.getItemInHand() == null) return;
+        if (!compareItemStr(p.getItemInHand(), plg.wand_item)) return;
+        Wand.toggleEffect(p, event.getClickedBlock());
+    }
+    
     
 }
 

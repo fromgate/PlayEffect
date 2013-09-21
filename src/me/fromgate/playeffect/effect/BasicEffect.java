@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import me.fromgate.playeffect.DrawType;
@@ -19,7 +18,7 @@ public abstract class BasicEffect {
 
     private Location loc;
     private Location loc2;
-    
+
 
     Map<String,String> params = new HashMap<String,String>();
 
@@ -30,11 +29,11 @@ public abstract class BasicEffect {
     private boolean land = false; // land:true
     private List<Location> cache  = new ArrayList<Location>();
 
-
     public void initEffect(VisualEffect effecttype, Location loc, Map<String,String> params){
         this.type = effecttype;
         this.params = params;
         this.loc = loc;
+        this.land = getParam("land",false);
         String loc2str = getParam("loc2","");
         if (!loc2str.isEmpty()) loc2 = Util.parseLocation(loc2str);
         radius = getParam("radius",0);
@@ -46,10 +45,6 @@ public abstract class BasicEffect {
 
     public void onInit(){
         // переопределять этот метод если эффекту нужна внутренняя инициализация
-    }
-
-    public BasicEffect (){
-
     }
 
     public VisualEffect getType(){
@@ -72,33 +67,50 @@ public abstract class BasicEffect {
             locs.add(this.randomizeLocation());
             break;
         case CIRCLE:
-            if (radius>0) locs = Util.buildCircle(loc, radius);
+            if (radius>0) locs = buildCircle(loc, radius);
             else locs.add(loc);
             break;
         case LINE:
-            if (loc2 != null)  locs = Util.buildLine(loc, loc2);
+            if (loc2 != null)  locs = buildLine(loc, loc2);
             else locs.add(loc);
             break;
-        case REGION:
-            /* TODO
-             * 
-             */
+        case AREA:
+            if (loc2 != null) locs = buildCuboid(loc, loc2, this.land);
+            else locs.add(loc);
             break;
         case PLAIN:
-            if (loc2 != null) locs = Util.buildPlain(loc, loc2);
+            if (loc2 != null) locs = buildPlain(loc, loc2);
             else locs.add(loc);
             break;
         }
         return locs;
     }
 
+    private List<Location> buildPlain(Location loc1, Location loc2) {
+        if (cache.isEmpty()) cache = Util.buildPlain(loc1, loc2);
+        return cache;
+    }
 
+    private List<Location> buildCuboid(Location loc1, Location loc2,boolean land) {
+        if (cache.isEmpty()) cache = Util.buildCuboid(loc, loc2, land);
+        return cache;
+    }
+
+    private List<Location> buildCircle(Location loc, int radius) {
+        if (cache.isEmpty()) cache = Util.buildCircle(loc, radius);
+        return cache;
+    }
+
+    private boolean rollDice(){
+        return PlayEffect.instance.u.rollDiceChance(this.chance);
+    }
+    
     public void playEffect(){
         List<Location> locs = getDrawLocations();
         locs = Util.refilterLocations(locs, amount);
         if ((locs == null)||locs.isEmpty()) return;
         for (Location effectlocation : locs)
-            if (PlayEffect.instance.u.rollDiceChance(chance)) play(effectlocation);
+            if (rollDice()) play(effectlocation);
     }
 
     protected abstract void play(Location loc);
@@ -112,6 +124,12 @@ public abstract class BasicEffect {
         return this.loc;
     }
 
+    private List<Location> buildLine(Location loc1, Location loc2){
+        if (cache.isEmpty()) cache = Util.buildLine(loc, loc2);
+        return cache;
+    }
+    
+    
     private Location randomizeLocation(){
         Location l = this.loc;
         if (radius>0){
@@ -136,7 +154,15 @@ public abstract class BasicEffect {
     }
 
     public String toString() {
-        return this.type.name()+" ["+Util.locationToString(loc)+"]";
+        String param = "";
+        for (String pstr : this.params.keySet()){
+            if (pstr.equalsIgnoreCase("id")) continue;
+            if (pstr.equalsIgnoreCase("effect")) continue;
+            if (!type.isValidParam(pstr)) continue;
+            if (param.isEmpty()) param = pstr+":"+params.get(pstr);
+            else param = param+", "+pstr+":"+params.get(pstr);
+        }
+        return this.type.name()+" "+Util.locationToString(loc);
     }
 
 
@@ -152,7 +178,6 @@ public abstract class BasicEffect {
         if (!params.get(key).matches("[0-9]+\\.?[0-9]*")) return defvalue;
         return Float.parseFloat(params.get(key));
     }
-
 
 
     public String getParam(String key, String defvalue){
@@ -173,6 +198,14 @@ public abstract class BasicEffect {
 
     public long getRepeatTick(){
         return this.type.getRepeatTicks();
+    }
+
+    public DrawType getDrawType(){
+        return this.drawtype;
+    }
+    
+    public void setParam(String key, String value){
+        params.put(key, value);
     }
 
 }

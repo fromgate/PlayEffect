@@ -7,6 +7,10 @@ public class EffectPotion extends BasicEffect {
     
     int clrparam = 0;
     
+    /*
+     * TODO 
+     */
+    
     @Override
     public void onInit(){
         clrparam = Math.max(0, Math.min(10, getParam("param",0)));

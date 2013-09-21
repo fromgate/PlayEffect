@@ -14,6 +14,9 @@ import org.bukkit.inventory.meta.FireworkMeta;
 
 
 public class NMSLib {
+    private static PlayEffect plg(){
+        return PlayEffect.instance;
+    }
     private static String [] tested_versions = {"v1_6_R2"};
     private static boolean disabled = true;
     private static boolean activated = false;
@@ -45,7 +48,7 @@ public class NMSLib {
     //private static Method getHandleCP;
     //private static Method sendPacket;
 
-    
+
 
 
 
@@ -67,7 +70,7 @@ public class NMSLib {
             version = v[3];
             obcPrefix = "org.bukkit.craftbukkit."+version+".";
             nmsPrefix = "net.minecraft.server."+version+".";;
-            PlayEffect.instance.u.log("Found craftbukkit version: "+version);
+            plg().u.log("Found craftbukkit version: "+version);
         }
         try {
             ChunkPosition = Class.forName(nmsPrefix+"ChunkPosition");
@@ -92,7 +95,7 @@ public class NMSLib {
             NmsEntity = Class.forName(nmsPrefix+"Entity");
             broadcastEntityEffect = NmsWorld.getMethod("broadcastEntityEffect",NmsEntity ,byte.class);
         } catch (Exception e) {
-            PlayEffect.instance.u.log("Failed to initialize NMSLib!");
+            plg().u.log("Failed to initialize NMSLib!");
             e.printStackTrace();
         }
         activated = true;
@@ -122,7 +125,7 @@ public class NMSLib {
             Object packet = newPacket.newInstance(loc.getX(),loc.getY(),loc.getZ(),expl_f, fillExplosionBlocks(loc,size),v);
             sendPacketNearby.invoke(handleCraftServer, loc.getX(), loc.getY(), loc.getZ(),64,dimension,packet);
         } catch (Exception e) {
-            PlayEffect.instance.u.logOnce("explfail","[NMSLib] Failed to send explosion packet!");
+            plg().u.logOnce("explfail","[NMSLib] Failed to send explosion packet!");
             e.printStackTrace();
         }
     }
@@ -169,28 +172,36 @@ public class NMSLib {
             int dimension = dimensionField.getInt(worldServer);
             sendPacketNearby.invoke(handleCraftServer, loc.getX(), loc.getY(), loc.getZ(),64,dimension,sPacket);
         } catch (Exception e){
-            PlayEffect.instance.u.logOnce("prt"+effectname,"[NMSLib] Failed to send particle "+effectname+" packet!");
+            plg().u.logOnce("prt"+effectname,"[NMSLib] Failed to send particle "+effectname+" packet!");
             e.printStackTrace();
         }
 
     }
-    
-    
-    public static void playFirework(World world, Location loc, FireworkEffect fe) throws Exception {
-        Firework fw = (Firework) world.spawn(loc, Firework.class);
-        Object nms_world = null;
-        Object nms_firework = null;
-        nms_world = world_getHandle.invoke(world, (Object[]) null);
-        nms_world = world_getHandle.invoke(world);
-        nms_firework = firework_getHandle.invoke(fw, (Object[]) null);
-        FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
-        data.clearEffects();
-        data.setPower(1);
-        data.addEffect(fe);
-        fw.setFireworkMeta(data);
-        broadcastEntityEffect.invoke(nms_world, new Object[] {nms_firework, (byte) 17});
-        fw.remove();
+
+    public static void playFirework(final World world, final Location loc, final FireworkEffect fe) throws Exception {
+        /* Bukkit.getScheduler().scheduleSyncDelayedTask(PlayEffect.instance,new Runnable(){
+            @Override
+            public void run(){*/
+        try{
+            Firework fw = (Firework) world.spawn(loc, Firework.class);
+            Object nms_world = null;
+            Object nms_firework = null;
+            nms_world = world_getHandle.invoke(world, (Object[]) null);
+            nms_world = world_getHandle.invoke(world);
+            nms_firework = firework_getHandle.invoke(fw, (Object[]) null);
+            FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
+            data.clearEffects();
+            data.setPower(1);
+            data.addEffect(fe);
+            fw.setFireworkMeta(data);
+            broadcastEntityEffect.invoke(nms_world, new Object[] {nms_firework, (byte) 17});
+            fw.remove();
+        } catch (Exception e){
+        }
+        /*  }
+        }, 1);*/
     }
+
 
 
 

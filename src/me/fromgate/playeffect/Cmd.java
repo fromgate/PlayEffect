@@ -63,7 +63,21 @@ public class Cmd implements CommandExecutor{
     
     private boolean executeCmd(CommandSender sender, String cmd, String arg) {
         if (playEffect(sender,cmd,arg)) return true;
-        return false;
+        else if (cmd.equalsIgnoreCase("list")){
+            int page = 1;
+            if (plg.u.isIntegerGZ(arg)) page = Integer.parseInt(arg); 
+            Effects.printEffectsList(sender, page);
+        } else if(cmd.equalsIgnoreCase("info")){
+            Effects.printEffectsInfo(sender, arg);
+        } else if(cmd.equalsIgnoreCase("remove")){
+            if (plg.u.isIntegerGZ(arg)){
+                if (Effects.removeStaticEffect(Integer.parseInt(arg)-1)) plg.u.printMSG(sender,"msg_effectremove",arg);
+                else plg.u.printMSG(sender,"msg_effectremovefail",arg);
+            } else plg.u.printMSG(sender,"msg_unknowneffect",arg);
+        } else if(cmd.equalsIgnoreCase("wand")){
+            return setWandMode(sender, arg, "");
+        } else return false;
+        return true;
     }
     
     private boolean executeCmd(CommandSender sender, String cmd, String arg1, String arg2) {
@@ -74,6 +88,8 @@ public class Cmd implements CommandExecutor{
                 if (setEffect (sender,arg1,arg2)) plg.u.printMSG(sender, "msg_effectset",arg1);
                 else plg.u.printMSG(sender, "msg_effectnotset",arg1);
             } else plg.u.printMSG(sender, "msg_unknowneffect",arg1);
+        }else if(cmd.equalsIgnoreCase("wand")){
+            return setWandMode(sender, arg1, arg2);
         } else return false;
         return true;
     }
@@ -81,7 +97,9 @@ public class Cmd implements CommandExecutor{
     private boolean executeCmd(CommandSender sender, String cmd, String arg1, String arg2, String arg3) {
         if (playEffect(sender,cmd,arg1+" "+arg2+" "+arg3)) return true;
         else if(cmd.equalsIgnoreCase("set")){
-            return executeCmd(sender, arg1, arg2+" "+arg3);
+            return executeCmd(sender, "set", arg1, arg2+" "+arg3);
+        }else if(cmd.equalsIgnoreCase("wand")){
+            return setWandMode(sender, arg1, arg2+" "+arg3);
         } else return false;
     }
     
@@ -90,14 +108,28 @@ public class Cmd implements CommandExecutor{
         if (!VisualEffect.contains(effect)) return false;
         VisualEffect ve = VisualEffect.valueOf(effect.toUpperCase());
         if (ve == VisualEffect.BASIC) return false;
-        // TODO!!!!
-        String id = "test";
         Map<String,String> params = Effects.parseParams(param);
+        String id = Effects.getId(Effects.getParam(params, "id", ""));
         String time = Effects.getParam(params, "time", Long.toString(ve.getRepeatTicks())+"t"); 
         BasicEffect be = Effects.createEffect(ve, params);
-        Effects.addStaticEffect(be, id,time, true);
+        Effects.createStaticEffect(be, id,time, true);
         return true;
     }
+    
+    
+    
+    // play set <effect> time:10
+    private boolean setWandMode (CommandSender sender, String effect, String param) {
+        if (!(sender instanceof Player)) return false;
+        Player p = (Player) sender;
+        if (!VisualEffect.contains(effect)) return false;
+        Wand.setWand(p, effect, param);
+        plg.u.printMSG(p, "msg_wandenabled",effect,param);
+        return true;
+    }
+
+    
+    
     
     private boolean playEffect(CommandSender sender, String cmd, String arg) {
         if (!VisualEffect.contains(cmd)) return false;
@@ -123,7 +155,7 @@ public class Cmd implements CommandExecutor{
         // play help
         if (playEffect(sender,cmd,"view")) return true;
         else if (cmd.equalsIgnoreCase("list")){
-
+            Effects.printEffectsList(sender, 1);
         }else if (cmd.equalsIgnoreCase("test")){
             Player p = (Player)sender;
             BasicEffect e = Effects.createEffect(VisualEffect.FIREWORK, "radius:5 land:false loc:"+Util.locationToStrLoc(getTargetBlockFaceLocation (p)));
@@ -131,6 +163,12 @@ public class Cmd implements CommandExecutor{
             se.startRepeater();
             
         }else if (cmd.equalsIgnoreCase("wand")){
+            if (!(sender instanceof Player)) return false;
+            Player p = (Player) sender;
+            if (Wand.hasWand(p)) {
+                Wand.clearWand(p);
+                plg.u.printMSG(p, "msg_wanddisabled");
+            }
 
         }else if (cmd.equalsIgnoreCase("check")){
 
@@ -139,7 +177,8 @@ public class Cmd implements CommandExecutor{
         } else return false;
         return true;
     }
-    
+
+    @SuppressWarnings("deprecation")
     private Location getTargetBlockFaceLocation (Player p){
         List<Block> blocks = p.getLineOfSight(null, 100);
         if (blocks.isEmpty()) return null;
@@ -152,6 +191,15 @@ public class Cmd implements CommandExecutor{
         String arg = param;
         if ((sender instanceof Player)) {
             Player p = (Player)sender;
+            if (WEGLib.isWE()){
+                List<Location> locs = WEGLib.getSelectionLocations(p);
+                if (locs.size()>0){
+                    if (!arg.contains("loc:"))
+                        arg = "loc:"+Util.locationToStrLoc(locs.get(0))+" "+arg;
+                    if ((!arg.contains("loc2:"))&&(locs.size()==2))
+                        arg = "loc2:"+Util.locationToStrLoc(locs.get(1))+" "+arg;
+                }
+            }
             if (arg.contains("loc:here")) arg = arg.replace("loc:here", "loc:"+Util.locationToStrLoc(p.getLocation()));
             if (arg.contains("loc:view")) arg = arg.replace("loc:view", "loc:"+Util.locationToStrLoc(getTargetBlockFaceLocation (p)));
             if (!arg.contains("loc:")) arg = "loc:"+Util.locationToStrLoc(getTargetBlockFaceLocation (p))+" "+arg;

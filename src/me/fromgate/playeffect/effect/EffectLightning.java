@@ -14,7 +14,7 @@ public class EffectLightning extends BasicEffect{
 
     @Override
     public void onInit(){
-        chance = getParam("chance",100);
+        chance = getParam("lchance",100);
         mode = getParam("mode","anytime");
         if (!PlayEffect.instance.u.isWordInList(mode, lightmode)) mode = "storm";
     }
