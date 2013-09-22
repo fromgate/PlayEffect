@@ -37,12 +37,13 @@ public class StaticEffect {
 
     public void startRepeater(){
         if (!enabled) return;
-        task = Bukkit.getScheduler().runTaskTimer(PlayEffect.instance, new Runnable(){
-            @Override
-            public void run() {
-                effect.playEffect();
-            }
-        }, 10L, repeat_ticks);
+        if ((task==null)||(!Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId())))
+            task = Bukkit.getScheduler().runTaskTimer(PlayEffect.instance, new Runnable(){
+                @Override
+                public void run() {
+                    effect.playEffect();
+                }
+            }, 10L, repeat_ticks);
     }
 
     public void stopRepeater(){

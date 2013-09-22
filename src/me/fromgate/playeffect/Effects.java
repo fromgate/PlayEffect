@@ -26,10 +26,16 @@ public class Effects {
 
     private static List<StaticEffect> effects = new ArrayList<StaticEffect>();
 
-    public static void stopAllEffects(){
+    protected static void stopAllEffects(){
         for (StaticEffect se : effects)
             se.stopRepeater();
     }
+    
+    protected static void startAllEffects(){
+        for (StaticEffect se : effects)
+            se.startRepeater();
+    }
+
 
     
     public int countEffectsId (String id){
@@ -68,10 +74,10 @@ public class Effects {
         
     }
         
-    public static void setEnabled(String id, boolean enable){
+/*    public static void setEnabled(String id, boolean enable){
         for (int i = effects.size()-1; i>=0; i--)
             if (effects.get(i).getId().equalsIgnoreCase(id)) effects.get(i).setEnabled(enable);
-    }
+    } */
 
     public static void playEffect (VisualEffect effect, Map<String,String> params){
         BasicEffect e = createEffect   (effect, params);
@@ -168,14 +174,17 @@ public class Effects {
         return "effect"+idcount;
     }
 
-    public static void printEffectsList(CommandSender sender, int page){
+    public static void printEffectsList(CommandSender sender, int page,String id){
         int lpp = 1000;
         if (sender instanceof Player) lpp = 15;
         List<String> list = new ArrayList<String> ();
         if (!effects.isEmpty()){
-            for (int i = 0; i<effects.size();i++)
-                list.add("&a"+effects.get(i).toString());
-            plg().u.printPage(sender, list, page, "msg_efflist", "", true,lpp);
+            for (int i = 0; i<effects.size();i++){
+                StaticEffect se = effects.get(i);
+                if (!id.isEmpty()&&(!se.getId().equalsIgnoreCase(id))) continue;
+                list.add("&3"+(i+1)+" &a"+effects.get(i).toString());
+            }
+            plg().u.printPage(sender, list, page, "msg_efflist", "", false,lpp);
         } else plg().u.printMSG (sender,"msg_efflistempty"); 
     }
     
@@ -204,6 +213,11 @@ public class Effects {
         } catch (Exception e) {
             plg().u.log("Failed to save effects.yml file");
         }
+    }
+    
+    protected static void reloadEffects(){
+        effects.clear();
+        loadEffects();
     }
 
     protected static void loadEffects(){
@@ -234,7 +248,7 @@ public class Effects {
             Effects.createStaticEffect(be,false);
         }
         
-        ImportNoSmoking.loadSmokePoints(); //импорт старья
+        
         
     }
     
@@ -257,6 +271,15 @@ public class Effects {
         return se.toString();
     }
     
+    public static boolean setEnabled(String id, boolean show){
+        boolean found = false;
+        for (StaticEffect se : effects)
+            if (se.getId().equalsIgnoreCase(id)) {
+                se.setEnabled(show);
+                found = true;
+            }
+        return found;
+    }
     
     
 }

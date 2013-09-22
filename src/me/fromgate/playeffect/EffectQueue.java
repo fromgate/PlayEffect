@@ -37,4 +37,8 @@ public class EffectQueue {
             if (loc.getWorld().equals(loc.getWorld())&&(loc.distance(p.getLocation())<=distance)) return true;
         return false;
     }
+    
+    protected static void clearQueue(){
+        queue.clear();
+    }
 }

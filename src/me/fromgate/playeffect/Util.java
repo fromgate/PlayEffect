@@ -25,9 +25,98 @@ public class Util extends FGUtilCore implements Listener {
         super (plugin, vcheck, savelng, language, devbukkitname, version_name, plgcmd, px);
         this.plg = plugin;
         InitCmd();
+        initMessages();
         if (savelng) this.SaveMSG();
     }
 
+    
+    private void initMessages(){
+        addMSG("msg_outdated", "%1% is outdated!");
+        addMSG("msg_pleasedownload", "Please download new version (%1%) from ");
+        addMSG("hlp_help", "Help");
+        addMSG("hlp_thishelp", "%1% - this help");
+        addMSG("hlp_execcmd", "%1% - execute command");
+        addMSG("hlp_typecmd", "Type %1% - to get additional help");
+        addMSG("hlp_typecmdpage", "Type %1% - to see another page of this help");
+        addMSG("hlp_commands", "Command list:");
+        addMSG("hlp_cmdparam_command", "command");
+        addMSG("hlp_cmdparam_page", "page");
+        addMSG("hlp_cmdparam_parameter", "parameter");
+        addMSG("cmd_unknown", "Unknown command: %1%");
+        addMSG("cmd_cmdpermerr", "Something wrong (check command, permissions)");
+        addMSG("enabled", "enabled");
+        addMSG("disabled", "disabled");
+        addMSG("lst_title", "String list:");
+        addMSG("lst_footer", "Page: [%1% / %2%]");
+        addMSG("lst_listisempty", "List is empty");
+        addMSG("msg_config", "Configuration");
+        addMSG("cfgmsg_general_check-updates", "Check updates: %1%");
+        addMSG("cfgmsg_general_language", "Language: %1%");
+        addMSG("cfgmsg_general_language-save", "Save translation file: %1%");
+        addMSG("hlp_list", "%1% - list of placed effects");
+        addMSG("hlp_set", "%1% - setup effect");
+        addMSG("hlp_smoke", "%1% - play Smoke effect");
+        addMSG("hlp_signal", "%1% - play Ender Signal effect");
+        addMSG("hlp_potion", "%1% - play Potion break effect");
+        addMSG("hlp_flame", "%1% - play Flame effect");
+        addMSG("hlp_explosion", "%1% - play Explosion effect");
+        addMSG("hlp_eye", "%1% - play Ender eye effect");
+        addMSG("hlp_lightning", "%1% - play Lightning effect");
+        addMSG("hlp_note", "%1% - play Note effect");
+        addMSG("hlp_portal", "%1% - play Portal effect");
+        addMSG("hlp_cloud", "%1% - play Smoke effect");
+        addMSG("hlp_hugeexplosion", "%1% - play Huge explosion effect");
+        addMSG("hlp_largeexplode", "%1% - play Large explode effect");
+        addMSG("hlp_spark", "%1% - play Spark effect");
+        addMSG("hlp_bubble", "%1% - play Bubble effect (works only underwater)");
+        addMSG("hlp_suspend", "%1% - play Suspend effect (I don''know what is it)");
+        addMSG("hlp_depthsuspend", "%1% - play Depth suspend effect (I don''know what is it)");
+        addMSG("hlp_townaura", "%1% - play Town aura effect");
+        addMSG("hlp_crit", "%1% - play Crit effect");
+        addMSG("hlp_magiccrit", "%1% - play Magic crit effect");
+        addMSG("hlp_mobspell", "%1% - play Mob spell effect");
+        addMSG("hlp_mobspellambient", "%1% - play Mob spell (ambient) effect");
+        addMSG("hlp_spell", "%1% - play Spell effect");
+        addMSG("hlp_instantspell", "%1% - play Instant spell effect");
+        addMSG("hlp_witchmagic", "%1% - play Witch magic effect");
+        addMSG("hlp_runes", "%1% - play Runes (magic book) effect");
+        addMSG("hlp_explode", "%1% - play explode effect");
+        addMSG("hlp_flamenew", "%1% - play Flame (new) effect");
+        addMSG("hlp_lava", "%1% - play Lava effect");
+        addMSG("hlp_footstep", "%1% - play Footstep effect");
+        addMSG("hlp_splash", "%1% - play Splash effect");
+        addMSG("hlp_largesmoke", "%1% - play Large smoke effect");
+        addMSG("hlp_reddust", "%1% - play Reddust effect");
+        addMSG("hlp_snowball", "%1% - play Snowball effect");
+        addMSG("hlp_dripwater", "%1% - play Drip water effect");
+        addMSG("hlp_driplava", "%1% - play Drip lava effect");
+        addMSG("hlp_snowshovel", "%1% - play Snow showel effect");
+        addMSG("hlp_slime", "%1% - play Slime effect");
+        addMSG("hlp_heart", "%1% - play Heart effect");
+        addMSG("hlp_angry", "%1% - play Angry villager effect");
+        addMSG("hlp_happy", "%1% - play Happy villager effect");
+        addMSG("hlp_tilecrack", "%1% - play Tile crack effect");
+        addMSG("hlp_iconcrack", "%1% - play Icon crack effect");
+        addMSG("hlp_firework", "%1% - play Firework effect");
+        addMSG("hlp_sound", "%1% - play Sound effect");
+        addMSG("hlp_song", "%1% - play Song effect");
+        addMSG("msg_effectset", "Effect was succesfully set");
+        addMSG("msg_unknowneffect", "Unknown effect type %1%");
+        addMSG("hlp_info", "%1% - show info about defined effect");
+        addMSG("hlp_remove", "%1% - remove static effect");
+        addMSG("hlp_wand", "%1% - to enable/disable wand mode");
+        addMSG("msg_wandenabled", "Wand mode enabled");
+        addMSG("msg_seteffect", "Effect set %1% (%2%)");
+        addMSG("msg_removed", "Effect %1% removed");
+        addMSG("hlp_show", "Unknown message (hlp_show)");
+        addMSG("hlp_hide", "Unknown message (hlp_hide)");
+        addMSG("hlp_resart", "Unknown message (hlp_resart)");
+        addMSG("hlp_reload", "Unknown message (hlp_reload)");
+        addMSG("msg_efflist", "Effect list");
+        addMSG("msg_efflistempty", "Effect list is empty");
+        addMSG("msg_efflist", "Effect list");
+        addMSG("msg_efflistempty", "Effect list is empty");
+    }
     public void InitCmd(){
         cmds.clear();
         cmdlist = "";
@@ -35,14 +124,17 @@ public class Util extends FGUtilCore implements Listener {
         addCmd("list", "config", "hlp_list","&3/playeffect list [page]",'b');
         addCmd("info", "config", "hlp_info","&3/playeffect info <effect id | number>",'b');
         addCmd("remove", "config", "hlp_remove","&3/playeffect remove <effect number>",'b');
-        addCmd("test", "config", "hlp_test","&3/playeffect test",'b');
-        addCmd("set", "config", "hlp_set","&3/playeffect set <effect> [param]",'b');
+        addCmd("set", "set", "hlp_set","&3/playeffect set <effect> [param]",'b');
         addCmd("wand", "wand", "hlp_wand","&3/playeffect wand <effect> [param]",'b');
+        addCmd("show", "show", "hlp_show","&3/playeffect show <effect id>",'b',true);
+        addCmd("hide", "show", "hlp_hide","&3/playeffect hide <effect id>",'b',true);
+        addCmd("restart", "config", "hlp_resart","&3/playeffect restart",'b',true);
+        addCmd("reload", "config", "hlp_reload","&3/playeffect reload",'b',true);
         
         for (VisualEffect ve : VisualEffect.values()){
             if (ve == VisualEffect.BASIC) continue;
             String ven = ve.name().toLowerCase();
-            addCmd(ven, ven, "hlp_"+ven,"&3/playeffect "+ven+" [parameters]",'b');
+            addCmd(ven, "play", "hlp_"+ven,"&3/playeffect "+ven+" [parameters]",'b');
         }
     }
 
@@ -81,16 +173,7 @@ public class Util extends FGUtilCore implements Listener {
         loc.getBlockX()+","+
         loc.getBlockY()+","+
         loc.getBlockZ();
-        /* trimDouble(loc.getX())+","+
-        trimDouble(loc.getY())+","+
-        trimDouble(loc.getZ())+","+
-        (float)trimDouble(loc.getYaw())+","+
-        (float)trimDouble(loc.getPitch());*/
     }
-    /*public static double trimDouble(double d){
-        int i = (int) (d*1000);
-        return ((double)i)/1000;
-    }*/
 
     public static Color colorByName(String colorname, Color defcolor){
         if (colorname.equalsIgnoreCase("random")) return Color.fromRGB(PlayEffect.instance.u.random.nextInt(255), PlayEffect.instance.u.random.nextInt(255), PlayEffect.instance.u.random.nextInt(255));

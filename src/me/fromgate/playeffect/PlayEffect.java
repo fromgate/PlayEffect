@@ -1,20 +1,34 @@
 package me.fromgate.playeffect;
 
 
+import java.io.IOException;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
  *  TODO
- * 1. /play <effectname> <?param>
+ * 1. +/play <effectname> <?param>
  * 2. Менеджер эффектов: 
- *    - Определение игроков поблизости (с кэшированием)
- *    - Создание массива повторяющихся эффектов и сохранение эффектов
- *    - /playeffect wand <effect> <time> <?param>
+ *    + - Определение игроков поблизости (с кэшированием)
+ *    + - Создание массива повторяющихся эффектов и сохранение эффектов
+ *    + - /playeffect wand <effect> <?param>
  *    
- * 3. Все эффекты проходят через очередь.
+ * 3. + Все эффекты проходят через очередь.
  * 4. Над-класс эффектов:
- *    - эффект
- *    - повторяемость (интервал, время)
+ *    + - эффект
+ *    + - повторяемость (интервал, время)
+ * 
+ * - /play show
+ * - /play hide
+ * 
+ * API
+ * - проигрывание эффекта
+ * - создание/удаление статичного эффекта
+ * - включение/выключение
+ * 
+ * 
+ * Таблички???
+ * 
  * 
  */
 
@@ -48,7 +62,13 @@ public class PlayEffect extends JavaPlugin {
         getCommand("playeffect").setExecutor(cmd);
         NMSLib.init();
         Effects.loadEffects();
+        ImportNoSmoking.loadSmokePoints(); //импорт старья
         WEGLib.init();
+        try {
+            MetricsLite metrics = new MetricsLite(this);
+            metrics.start();
+        } catch (IOException e) {
+        }
     }
 
     @Override
@@ -56,24 +76,22 @@ public class PlayEffect extends JavaPlugin {
         Effects.stopAllEffects();
     }
     
+    public static void play (VisualEffect effect, Location loc, String param){
+        if (effect == null) return;
+        if (loc == null) return;
+        Effects.playEffect(effect, param+" loc:"+Util.locationToStrLoc(loc));
+    }
+    
     public static void play (VisualEffect effect, String param){
         Effects.playEffect(effect, param);
     }
     
-    
-    /*
-     * API
-     * 
-     * play (VisualEffect type, Location loc, String param)
-     * playSmoke
-     * playSignal
-     * playPotion
-     * playFlame
-     * playExplosion
-     * play....
-     * 
-     * 
-     */
+    public static void play (String effect, String param){
+        if (!VisualEffect.contains(effect)) return;
+        VisualEffect ve = VisualEffect.valueOf(effect.toUpperCase());
+        if (ve == null) return;
+        Effects.playEffect(ve, param);
+    }
     
     private void saveCfg(){
         getConfig().set("general.check-updates",version_check);
@@ -87,7 +105,7 @@ public class PlayEffect extends JavaPlugin {
         saveConfig();
     }
     
-    private void loadCfg(){
+    protected void loadCfg(){
         reloadConfig();
         version_check = getConfig().getBoolean("general.check-updates",false);
         language = getConfig().getString("general.language","english");
