@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.scheduler.BukkitTask;
+
 import me.fromgate.playeffect.DrawType;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.Util;
@@ -15,14 +19,13 @@ import me.fromgate.playeffect.VisualEffect;
 public abstract class BasicEffect {
     VisualEffect type =VisualEffect.BASIC;
     DrawType drawtype = DrawType.NORMAL;
-
     private Location loc;
     private Location loc2;
-
-
+    private Long dur = 0L;
+    private Long ttl = 0L;
+    private Long freq = 0L;
+    private BukkitTask task;
     Map<String,String> params = new HashMap<String,String>();
-
-
     private int radius=0; // radius:X
     private int amount=-1;
     private int chance=100;
@@ -34,6 +37,8 @@ public abstract class BasicEffect {
         this.params = params;
         this.loc = loc;
         this.land = getParam("land",false);
+        dur =  Util.parseTime(getParam("dur", "0"));
+        if (dur>0) freq = Math.max(type.getRepeatTicks(), Util.timeToTicks(Util.parseTime(getParam("freq", type.getRepeatTicks()+"t"))));
         String loc2str = getParam("loc2","");
         if (!loc2str.isEmpty()) loc2 = Util.parseLocation(loc2str);
         radius = getParam("radius",0);
@@ -50,14 +55,6 @@ public abstract class BasicEffect {
     public VisualEffect getType(){
         return this.type;
     }
-
-    /* параметры:
-     *  radius - рэндомизация локации или радиус для круга и сферы
-     *  type:line, circle, sphere
-     *  loc2: вторая локация для линии
-     *  
-     * 
-     */
 
 
     private List<Location> getDrawLocations(){
@@ -104,14 +101,38 @@ public abstract class BasicEffect {
     private boolean rollDice(){
         return PlayEffect.instance.u.rollDiceChance(this.chance);
     }
-    
+
     public void playEffect(){
+        if (dur>0){
+            Long ct = System.currentTimeMillis();
+            if ((ttl!=0)&&(ct<ttl)) return;
+            ttl = dur+ct;
+            playMultipleEffect();
+        } else playSingleEffect();
+    }
+
+    public void playMultipleEffect(){
+        if (dur<=0) return;
+        if (System.currentTimeMillis()>ttl) return;
+        playSingleEffect();
+        if ((task==null)||(!Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId()))){
+            task = Bukkit.getScheduler().runTaskLater(PlayEffect.instance, new Runnable(){
+                @Override
+                public void run(){
+                    playMultipleEffect();
+                }
+            }, this.freq);
+        }
+    }
+
+    public void playSingleEffect(){
         List<Location> locs = getDrawLocations();
         locs = Util.refilterLocations(locs, amount);
         if ((locs == null)||locs.isEmpty()) return;
         for (Location effectlocation : locs)
             if (rollDice()) play(effectlocation);
     }
+
 
     protected abstract void play(Location loc);
 
@@ -128,8 +149,7 @@ public abstract class BasicEffect {
         if (cache.isEmpty()) cache = Util.buildLine(loc, loc2);
         return cache;
     }
-    
-    
+
     private Location randomizeLocation(){
         Location l = this.loc;
         if (radius>0){
@@ -190,22 +210,27 @@ public abstract class BasicEffect {
         return "";
     }
 
-
     public boolean getParam(String key, boolean defparam){
         if (params.containsKey(key)) return params.get(key).equalsIgnoreCase("true"); 
         return defparam; 
     }
 
     public long getRepeatTick(){
-        return this.type.getRepeatTicks();
+        return Math.max(type.getRepeatTicks(), Util.timeToTicks(this.dur));
     }
 
     public DrawType getDrawType(){
         return this.drawtype;
     }
-    
+
     public void setParam(String key, String value){
         params.put(key, value);
+    }
+
+    public void stopEffect(){
+        if (task==null) return;
+        if (Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId()))
+            task.cancel();
     }
 
 }

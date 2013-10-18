@@ -2,10 +2,8 @@ package me.fromgate.playeffect.effect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.Util;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -34,7 +32,6 @@ public class StaticEffect {
         return id;
     }
 
-
     public void startRepeater(){
         if (!enabled) return;
         if ((task==null)||(!Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId())))
@@ -43,13 +40,26 @@ public class StaticEffect {
                 public void run() {
                     effect.playEffect();
                 }
-            }, 10L, repeat_ticks);
+            }, 10L, repeat_ticks); 
     }
 
     public void stopRepeater(){
+        this.effect.stopEffect();
+        if (task == null) return;
         task.cancel();
         task = null;
     }
+    
+    /*public void stopRepeaterTTL(){
+        Bukkit.getScheduler().runTaskLater(PlayEffect.instance, new Runnable(){
+            @Override
+            public void run() {
+                stopRepeater();
+                Effects.clearOverduedTTL();
+            }
+        }, 1);
+    }*/
+    
 
     public void setEnabled(boolean enable){
         if(enabled&&(!enable)) stopRepeater();
@@ -101,7 +111,10 @@ public class StaticEffect {
         if (!effect.getLocation().getWorld().equals(loc.getWorld())) return false;
         if (effect.getLocation().getBlockX() != loc.getBlockX()) return false;
         if (effect.getLocation().getBlockY() != loc.getBlockY()) return false;
-        return (effect.getLocation().getBlockY() == loc.getBlockY());
+        return (effect.getLocation().getBlockZ() == loc.getBlockZ());
     }
+    
+    
+    
 
 }

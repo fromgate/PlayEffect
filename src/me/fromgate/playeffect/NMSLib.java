@@ -17,10 +17,9 @@ public class NMSLib {
     private static PlayEffect plg(){
         return PlayEffect.instance;
     }
-    private static String [] tested_versions = {"v1_6_R2"};
+    private static String [] tested_versions = {"v1_6_R2","v1_6_R3"};
     private static boolean disabled = true;
     private static boolean activated = false;
-
     private static String obcPrefix = "org.bukkit.craftbukkit.";
     private static String nmsPrefix = "net.minecraft.server.";
     private static String version = "";
@@ -33,26 +32,12 @@ public class NMSLib {
     private static Class<?> DedicatedPlayerList; 
     private static Class<?> WorldServer;
     private static Class<?> Packet63WorldParticles;
-
-
     private static Method aVec3D; 
     private static Method getHandleCS;
     private static Method sendPacketNearby;
     private static Method getHandleCW;
     private static Field dimensionField;
     private static Constructor<?> newPacket;
-
-
-    //private static Class<?> PlayerConnection;
-    //private static Class<?> CraftPlayer;
-    //private static Method getHandleCP;
-    //private static Method sendPacket;
-
-
-
-
-
-    ////////////////////////////////////////////////////////////////////
     private static Method world_getHandle;
     private static Method broadcastEntityEffect;
     private static Class<?> CraftFirework;
@@ -60,18 +45,16 @@ public class NMSLib {
     private static Class<?> NmsWorld;
     private static Class<?> NmsEntity;
 
-
     public static void init(){
         if (activated) return;
-
         String pkg = Bukkit.getServer().getClass().getPackage().getName();
         String [] v = pkg.split("\\.");
         if (v.length==4){
             version = v[3];
             obcPrefix = "org.bukkit.craftbukkit."+version+".";
             nmsPrefix = "net.minecraft.server."+version+".";;
-            plg().u.log("Found craftbukkit version: "+version);
         }
+        isTestedInform();
         try {
             ChunkPosition = Class.forName(nmsPrefix+"ChunkPosition");
             Vec3D = Class.forName(nmsPrefix+"Vec3D");
@@ -94,28 +77,41 @@ public class NMSLib {
             NmsWorld = Class.forName(nmsPrefix+"World");
             NmsEntity = Class.forName(nmsPrefix+"Entity");
             broadcastEntityEffect = NmsWorld.getMethod("broadcastEntityEffect",NmsEntity ,byte.class);
+            disabled = false;
         } catch (Exception e) {
-            plg().u.log("Failed to initialize NMSLib!");
+            log("Failed to initialize NMSLib! Some features of plugin will be disabled!");
+            log("Please download compatible version from: http://dev.bukkit.org/bukkit-plugins/playeffect/");
+            
             e.printStackTrace();
+            disabled = true;
         }
         activated = true;
     }
 
+    private static void log(String string) {
+       plg().u.log(string);
+    }
+
     public static boolean isTestedVersion(){
-        //if (version.isEmpty()) return uselibigot;
         for (int i = 0; i< tested_versions.length;i++){
             if (tested_versions[i].equalsIgnoreCase(version)) return true;
         }
         return false;
+    }
+    
+    public static void isTestedInform(){
+        if (isTestedVersion()) return;
+        log("Warning! PlayEffect was not tested with craftbukkit version "+version.replace("_", "."));
+        log("Check updates at http://dev.bukkit.org/bukkit-plugins/playeffect/");
+        log("or use this version at your own risk");
     }
 
     public static boolean isDisabled(){
         return disabled;
     }
 
-
-
     public static void sendExplosionPacket(Location loc, int size){
+        if (disabled) return;
         float expl_f = 1.1f; // Эээээ....
         try {
             Object v =  aVec3D.invoke(null,0,0,0);
@@ -125,8 +121,8 @@ public class NMSLib {
             Object packet = newPacket.newInstance(loc.getX(),loc.getY(),loc.getZ(),expl_f, fillExplosionBlocks(loc,size),v);
             sendPacketNearby.invoke(handleCraftServer, loc.getX(), loc.getY(), loc.getZ(),64,dimension,packet);
         } catch (Exception e) {
-            plg().u.logOnce("explfail","[NMSLib] Failed to send explosion packet!");
-            e.printStackTrace();
+            disabled = true;
+            log("Failed to create explosion effect.");
         }
     }
 
@@ -135,8 +131,6 @@ public class NMSLib {
         try {
             Constructor<?> newChunkPosition;
             newChunkPosition = ChunkPosition.getConstructor(int.class,int.class,int.class);
-
-
             for (int i = -r; i<=r; i++)
                 for (int j = -r; j<=r; j++)
                     for (int k = -r; k<=r; k++){
@@ -144,7 +138,6 @@ public class NMSLib {
                         if (loc.distance(la)<=r) expl_blocks.add(newChunkPosition.newInstance(la.getBlockX(), la.getBlockY(), la.getBlockZ()));
                     }
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return expl_blocks;
     }
@@ -152,6 +145,7 @@ public class NMSLib {
 
 
     public static void sendParticlesPacket(Location loc, String effectname, float xOffset, float yOffset, float zOffset, float effectSpeed, int amount){
+        if (disabled) return;
         try{
             Object sPacket= Packet63WorldParticles.newInstance();    
             for (Field f : Packet63WorldParticles.getDeclaredFields()){
@@ -172,16 +166,13 @@ public class NMSLib {
             int dimension = dimensionField.getInt(worldServer);
             sendPacketNearby.invoke(handleCraftServer, loc.getX(), loc.getY(), loc.getZ(),64,dimension,sPacket);
         } catch (Exception e){
-            plg().u.logOnce("prt"+effectname,"[NMSLib] Failed to send particle "+effectname+" packet!");
-            e.printStackTrace();
-        }
+            disabled = true;
+            log("Failed to create particles effect.");        }
 
     }
 
     public static void playFirework(final World world, final Location loc, final FireworkEffect fe) throws Exception {
-        /* Bukkit.getScheduler().scheduleSyncDelayedTask(PlayEffect.instance,new Runnable(){
-            @Override
-            public void run(){*/
+        if (disabled) return;
         try{
             Firework fw = (Firework) world.spawn(loc, Firework.class);
             Object nms_world = null;
@@ -197,12 +188,8 @@ public class NMSLib {
             broadcastEntityEffect.invoke(nms_world, new Object[] {nms_firework, (byte) 17});
             fw.remove();
         } catch (Exception e){
+            disabled = true;
+            log("Failed to create firework effect.");
         }
-        /*  }
-        }, 1);*/
     }
-
-
-
-
 }

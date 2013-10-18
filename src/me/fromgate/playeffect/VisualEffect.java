@@ -14,7 +14,7 @@ import me.fromgate.playeffect.effect.EffectSong;
 import me.fromgate.playeffect.effect.EffectSound;
 
 public enum VisualEffect  {
-    BASIC(BasicEffect.class,"",0,"id,time,loc,loc2,radius,amount,chance,land,draw"),
+    BASIC(BasicEffect.class,"",0,"id,time,loc,loc2,radius,amount,chance,land,draw,freq,dur"),
     SMOKE (EffectSmoke.class,"",5,"wind"),
     SIGNAL (EffectSignal.class,"",5,""),
     POTION (EffectPotion.class,"",5,"param"),

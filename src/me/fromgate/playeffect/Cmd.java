@@ -22,22 +22,6 @@ public class Cmd implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
         if ((args.length>0)&&plg.u.checkCmdPerm(sender, args[0])){
-            // play <effect>
-            // play list
-            // play wand
-            // play check
-            // play help
-
-            // play list <page>
-            // play check <radius>
-            // play set <effect>
-            // play wand <effect>
-            // play <effect> <params>            
-
-
-            // play <effect> <params>
-            // play set <effect> <params>
-            // play wand <effect> <params>
             switch (args.length){
             case 1: return executeCmd(sender,args[0]);
             case 2: return executeCmd(sender,args[0],args[1]);
@@ -70,8 +54,8 @@ public class Cmd implements CommandExecutor{
             Effects.printEffectsInfo(sender, arg);
         } else if(cmd.equalsIgnoreCase("remove")){
             if (plg.u.isIntegerGZ(arg)){
-                if (Effects.removeStaticEffect(Integer.parseInt(arg)-1)) plg.u.printMSG(sender,"msg_effectremove",arg);
-                else plg.u.printMSG(sender,"msg_effectremovefail",arg);
+                if (Effects.removeStaticEffect(Integer.parseInt(arg)-1)) plg.u.printMSG(sender,"msg_removed",arg);
+                else plg.u.printMSG(sender,"msg_removefailed",arg);
             } else plg.u.printMSG(sender,"msg_unknowneffect",arg);
         } else if(cmd.equalsIgnoreCase("show")){
             if (Effects.setEnabled(arg, true)) plg.u.printMSG(sender,"msg_showeffect",arg);
@@ -81,6 +65,11 @@ public class Cmd implements CommandExecutor{
             else plg.u.printMSG(sender,"msg_unknown",arg);
         } else if(cmd.equalsIgnoreCase("wand")){
             return setWandMode(sender, arg, "");
+        } else if (cmd.equalsIgnoreCase("check")){
+            if (!(sender instanceof Player)) return false;
+            int radius = 8;
+            if (plg.u.isIntegerGZ(arg)) radius = Integer.parseInt(arg);
+            Effects.printAroundEffects((Player) sender, radius);
         } else return false;
         return true;
     }
@@ -146,18 +135,28 @@ public class Cmd implements CommandExecutor{
 
 
 
-
-    private boolean playEffect(CommandSender sender, String cmd, String arg) {
-        if (!VisualEffect.contains(cmd)) return false;
-
+    private VisualEffect getVisualEffect (String effname){
+        if (!VisualEffect.contains(effname)) return null; 
         VisualEffect ve = null;
         try{
-            ve = VisualEffect.valueOf(cmd.toUpperCase());
+            ve = VisualEffect.valueOf(effname.toUpperCase());
         } catch (Exception e){
+            return null;
+        }
+        if (ve == null) return null;
+        if (ve == VisualEffect.BASIC) return null;
+        return ve;        
+    }
+
+    private boolean playEffect(CommandSender sender, String cmd, String arg) {
+        if ((!(sender instanceof Player))&&(!arg.contains("loc:"))) {
+            plg.u.printMSG(sender, "msg_consoleneedcoord",cmd+" "+arg);
+        }
+        VisualEffect ve = getVisualEffect(cmd);
+        if (ve == null){
+            plg.u.printMSG(sender, "msg_wrongeffect",cmd);
             return false;
         }
-        if (ve == null) return false;
-        if (ve == VisualEffect.BASIC) return false;
         arg = processLocation(sender, arg);
         Effects.playEffect(ve,  arg);
         return true;
@@ -182,15 +181,20 @@ public class Cmd implements CommandExecutor{
         }else if (cmd.equalsIgnoreCase("restart")){
             Effects.stopAllEffects();
             EffectQueue.clearQueue();
+            //Effects.clearOverduedTTL();
             Effects.startAllEffects();
             plg.u.printMSG(sender, "msg_restarted");
         }else if (cmd.equalsIgnoreCase("reload")){
             Effects.stopAllEffects();
             EffectQueue.clearQueue();
+            //Effects.clearOverduedTTL();
             plg.loadCfg();
             Effects.reloadEffects();
             Effects.startAllEffects();
             plg.u.printMSG(sender, "msg_reloaded");
+        } else if (cmd.equalsIgnoreCase("check")){
+            if (!(sender instanceof Player)) return false;
+            Effects.printAroundEffects((Player) sender, 8);
         } else if (cmd.equalsIgnoreCase("help")){
             plg.u.PrintHlpList(sender, 1, 15);
         } else return false;

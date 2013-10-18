@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.fromgate.playeffect.effect.*;
-
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,38 +18,46 @@ public class Effects {
     private static PlayEffect plg(){
         return PlayEffect.instance;
     }
-    
+
     private static Util u(){
         return plg().u;
     }
 
     private static List<StaticEffect> effects = new ArrayList<StaticEffect>();
+    //private static List<StaticEffect> ttleffects = new ArrayList<StaticEffect>();
 
     protected static void stopAllEffects(){
         for (StaticEffect se : effects)
             se.stopRepeater();
+/*        for (StaticEffect se : ttleffects)
+            se.stopRepeater();*/
     }
-    
+
     protected static void startAllEffects(){
         for (StaticEffect se : effects)
             se.startRepeater();
     }
 
 
-    
+
     public int countEffectsId (String id){
         int count = 0;
         for (StaticEffect se :effects)
             if (se.getId().equalsIgnoreCase(id)) count++;
         return count;
     }
-    
+
     public static boolean createStaticEffect (BasicEffect be, String id, String time, boolean run){
         if (be == null) return false;
         Long rpt = Util.timeToTicks(Util.parseTime(time));
-        StaticEffect se = new StaticEffect (id,be,rpt);
-        effects.add(se);
+        if (!addStaticEffect(new StaticEffect (id,be,rpt))) return false;
         saveEffects();        
+        return true;
+    }
+
+    private static boolean addStaticEffect (StaticEffect se){
+        if (se == null) return false;
+        effects.add(se); 
         return true;
     }
 
@@ -58,8 +65,7 @@ public class Effects {
         if (be == null) return false;
         Long rpt = Util.timeToTicks(Util.parseTime(be.getParam("time")));
         String id = getId(be.getParam("id",""));
-        StaticEffect se = new StaticEffect (id,be,rpt);
-        effects.add(se);
+        if (!addStaticEffect(new StaticEffect (id,be,rpt))) return false;
         if (save) saveEffects();
         return true;
     }
@@ -71,25 +77,20 @@ public class Effects {
         effects.remove(num);
         saveEffects();
         return true;
-        
     }
-        
-/*    public static void setEnabled(String id, boolean enable){
+
+    /*    public static void setEnabled(String id, boolean enable){
         for (int i = effects.size()-1; i>=0; i--)
             if (effects.get(i).getId().equalsIgnoreCase(id)) effects.get(i).setEnabled(enable);
     } */
 
-    public static void playEffect (VisualEffect effect, Map<String,String> params){
-        BasicEffect e = createEffect   (effect, params);
-        if (e!=null) EffectQueue.addToQueue(e);
-    }
-    
+
     public static BasicEffect createEffect (String effectstr, String param){
         if (!VisualEffect.contains(effectstr)) return null;
         VisualEffect ve = VisualEffect.valueOf(effectstr.toUpperCase());
         return createEffect (ve, param);
     }
-    
+
     public static BasicEffect createEffect (VisualEffect effect, String param){
         Map<String,String> params = parseParams(param);
         return createEffect (effect, params);
@@ -101,7 +102,7 @@ public class Effects {
         if (!params.isEmpty())
             for (String key : params.keySet())
                 fullparams.put(key, params.get(key));
-                
+
         if (fullparams.containsKey("loc"))
             loc = Util.parseLocation(fullparams.get("loc"));
         if (loc != null) return createEffect (effect, loc, fullparams);
@@ -109,11 +110,27 @@ public class Effects {
     }
 
 
+    public static void playEffect (VisualEffect effect, Map<String,String> params){
+        BasicEffect be = Effects.createEffect(effect, params);
+        if (be == null) return;
+        EffectQueue.addToQueue(be);
+        //long ttl = Util.parseTime(Effects.getParam(params, "ttl", ""));
+        //if (ttl<=0) EffectQueue.addToQueue(be);
+        //else Effects.createStaticEffect(be, false);
+    }
 
 
     public static void playEffect (VisualEffect effect, String param){
         Map<String,String> params = parseParams(param);
-        playEffect (effect, params);
+        playEffect (effect,params);
+        /*
+        long ttl = Util.parseTime(Effects.getParam(params, "ttl", ""));
+        if (ttl<=0) playEffect (effect, params);
+        else {
+            BasicEffect be = Effects.createEffect(effect, params);
+            if (be == null) return;
+            Effects.createStaticEffect(be, false);
+        }*/
     }
 
 
@@ -187,7 +204,7 @@ public class Effects {
             plg().u.printPage(sender, list, page, "msg_efflist", "", false,lpp);
         } else plg().u.printMSG (sender,"msg_efflistempty"); 
     }
-    
+
     public static void printEffectsInfo(CommandSender sender, String numid){
         List<String> ln = new ArrayList<String>();
         if (u().isIntegerGZ(numid)){
@@ -214,7 +231,7 @@ public class Effects {
             plg().u.log("Failed to save effects.yml file");
         }
     }
-    
+
     protected static void reloadEffects(){
         effects.clear();
         loadEffects();
@@ -230,7 +247,7 @@ public class Effects {
             plg().u.log("Failed to load effects.yml file");
             return;
         }
-        
+
         VisualEffect ve;
         for (String uid : cfg.getKeys(false)){
             Map<String,String> params = new HashMap<String,String>();
@@ -247,30 +264,30 @@ public class Effects {
             if (be == null) continue;
             Effects.createStaticEffect(be,false);
         }
-        
-        
-        
+
+
+
     }
-    
+
     public static int getEffectInLocation(Location loc){
         if (effects.size()==0) return -1;
         for (int i = 0; i<effects.size();i++)
             if (effects.get(i).inLocation(loc)) return i;
         return -1;
     }
-    
+
     private static StaticEffect getStaticEffect(int num){
         if (num<0) return null;
         if (num>=effects.size()) return null;
         return effects.get(num);
     }
-    
+
     public static String getStaticEffectStr (int num){
         StaticEffect se = getStaticEffect(num);
         if (se == null) return "";
         return se.toString();
     }
-    
+
     public static boolean setEnabled(String id, boolean show){
         boolean found = false;
         for (StaticEffect se : effects)
@@ -280,6 +297,36 @@ public class Effects {
             }
         return found;
     }
-    
-    
+
+
+    public static void printAroundEffects (Player p, int radius){
+        Location loc = p.getLocation();
+        List<String> list = new ArrayList<String>();
+        if (!effects.isEmpty())
+            for (int x = loc.getBlockX()-radius; x<=loc.getBlockX()+radius;x++)
+                for (int y = loc.getBlockY()-radius; y<=loc.getBlockY()+radius;y++)
+                    for (int z = loc.getBlockZ()-radius; z<=loc.getBlockZ()+radius;z++){
+                        for (int i = 0; i< effects.size();i++){
+                            if (effects.get(i).inLocation(new Location (loc.getWorld(), x, y,z)))
+                                list.add("&3"+(i+1)+" &a"+effects.get(i).toString());
+                        }
+                    }
+        if (list.isEmpty()) plg().u.printMSG (p,"msg_efflistempty");
+        else plg().u.printPage(p, list, 1, "msg_efflist", "", false,1000);
+    }
+
+    /*public static void clearOverduedTTL() {
+        if (ttleffects.isEmpty()) return;
+        Bukkit.getScheduler().runTaskLater(plg(), new Runnable(){
+            @Override
+            public void run() {
+                for (int i = ttleffects.size()-1; i>=0;i--)
+                    if (ttleffects.get(i).ttlOverdue()) {
+                        ttleffects.get(i).stopRepeater();
+                        ttleffects.remove(i);
+                    }
+            }
+        }, 1);
+    }*/
+
 }

@@ -16,20 +16,25 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 
 public class Util extends FGUtilCore implements Listener {
     PlayEffect plg;
+    
+    private static PlayEffect plg(){
+        return PlayEffect.instance;
+    }
 
-    public Util(PlayEffect plugin, boolean vcheck, boolean savelng, String language, String devbukkitname, String version_name, String plgcmd, String px){
-        super (plugin, vcheck, savelng, language, devbukkitname, version_name, plgcmd, px);
+    public Util(PlayEffect plugin, boolean savelng, String language, String plgcmd){
+        super (plugin, savelng, language, plgcmd);
         this.plg = plugin;
         InitCmd();
         initMessages();
         if (savelng) this.SaveMSG();
     }
 
-    
+
     private void initMessages(){
         addMSG("msg_outdated", "%1% is outdated!");
         addMSG("msg_pleasedownload", "Please download new version (%1%) from ");
@@ -69,7 +74,7 @@ public class Util extends FGUtilCore implements Listener {
         addMSG("hlp_largeexplode", "%1% - play Large explode effect");
         addMSG("hlp_spark", "%1% - play Spark effect");
         addMSG("hlp_bubble", "%1% - play Bubble effect (works only underwater)");
-        addMSG("hlp_suspend", "%1% - play Suspend effect (I don''know what is it)");
+        addMSG("hlp_suspend", "%1% - play Suspend effect (works only underwater)");
         addMSG("hlp_depthsuspend", "%1% - play Depth suspend effect (I don''know what is it)");
         addMSG("hlp_townaura", "%1% - play Town aura effect");
         addMSG("hlp_crit", "%1% - play Crit effect");
@@ -116,25 +121,36 @@ public class Util extends FGUtilCore implements Listener {
         addMSG("msg_efflistempty", "Effect list is empty");
         addMSG("msg_efflist", "Effect list");
         addMSG("msg_efflistempty", "Effect list is empty");
+        addMSG("hlp_show", "%1% - show effect(s)");
+        addMSG("hlp_show", "%1% - hide effect(s)");
+        addMSG("hlp_resart", "%1% - restart static effects");
+        addMSG("hlp_reload", "%1% - reload configuration");
+        addMSG("hlp_check", "%1% - find effect around you");
+        addMSG("msg_restarted", "All effects restarted!");
+        addMSG("msg_reloaded", "All effects reloaded and restarted!");
+        addMSG("msg_removefailed", "Failed to remove effect %1%");
+        addMSG("msg_consoleneedcoord", "You must define effect location when executing command play <effect> by console");
+        addMSG("msg_wrongeffect", "Failed parse effect name %1%");
     }
-    public void InitCmd(){
+    private void InitCmd(){
         cmds.clear();
         cmdlist = "";
-        addCmd("help", "config", "hlp_thishelp","&3/playeffect help [page]",'b');
-        addCmd("list", "config", "hlp_list","&3/playeffect list [page]",'b');
-        addCmd("info", "config", "hlp_info","&3/playeffect info <effect id | number>",'b');
-        addCmd("remove", "config", "hlp_remove","&3/playeffect remove <effect number>",'b');
+        addCmd("help", "config", "hlp_thishelp","&3/playeffect help [page]",'b',true);
+        addCmd("list", "config", "hlp_list","&3/playeffect list [page]",'b',true);
+        addCmd("info", "config", "hlp_info","&3/playeffect info <effect id | number>",'b',true);
+        addCmd("remove", "config", "hlp_remove","&3/playeffect remove <effect number>",'b',true);
         addCmd("set", "set", "hlp_set","&3/playeffect set <effect> [param]",'b');
         addCmd("wand", "wand", "hlp_wand","&3/playeffect wand <effect> [param]",'b');
         addCmd("show", "show", "hlp_show","&3/playeffect show <effect id>",'b',true);
         addCmd("hide", "show", "hlp_hide","&3/playeffect hide <effect id>",'b',true);
+        addCmd("check", "config", "hlp_check","&3/playeffect check [radius]",'b');
         addCmd("restart", "config", "hlp_resart","&3/playeffect restart",'b',true);
         addCmd("reload", "config", "hlp_reload","&3/playeffect reload",'b',true);
-        
+
         for (VisualEffect ve : VisualEffect.values()){
             if (ve == VisualEffect.BASIC) continue;
             String ven = ve.name().toLowerCase();
-            addCmd(ven, "play", "hlp_"+ven,"&3/playeffect "+ven+" [parameters]",'b');
+            addCmd(ven, "play", "hlp_"+ven,"&3/playeffect "+ven+" [parameters]",'b',true);
         }
     }
 
@@ -176,7 +192,7 @@ public class Util extends FGUtilCore implements Listener {
     }
 
     public static Color colorByName(String colorname, Color defcolor){
-        if (colorname.equalsIgnoreCase("random")) return Color.fromRGB(PlayEffect.instance.u.random.nextInt(255), PlayEffect.instance.u.random.nextInt(255), PlayEffect.instance.u.random.nextInt(255));
+        if (colorname.equalsIgnoreCase("random")) return Color.fromRGB(plg().u.random.nextInt(255), plg().u.random.nextInt(255), plg().u.random.nextInt(255));
         Color [] clr = {Color.WHITE, Color.SILVER, Color.GRAY, Color.BLACK, 
                 Color.RED, Color.MAROON, Color.YELLOW, Color.OLIVE,
                 Color.LIME, Color.GREEN, Color.AQUA, Color.TEAL,
@@ -190,12 +206,12 @@ public class Util extends FGUtilCore implements Listener {
 
         if (colorname.contains(",")){
             String [] ln = colorname.split(",");
-            if ((ln.length==3)&&PlayEffect.instance.u.isInteger(ln[0],ln[1],ln[2]))
+            if ((ln.length==3)&&plg().u.isInteger(ln[0],ln[1],ln[2]))
                 return Color.fromRGB(Integer.parseInt(ln[0]), Integer.parseInt(ln[1]), Integer.parseInt(ln[2]));
         }
         return defcolor;
     }
-    
+
     public static List<Location> buildCircle (Location loc, int radius){
         List<Location> circle = new ArrayList<Location>();
         World w = loc.getWorld();
@@ -236,7 +252,7 @@ public class Util extends FGUtilCore implements Listener {
                 plain.add(new Location (loc1.getWorld(), x, loc1.getBlockY(), z));
         return plain;
     }
-    
+
     public static List<Location> buildCuboid(Location loc1, Location loc2, boolean land){
         List<Location> cube = new ArrayList<Location>();
         if (loc1 == null) return cube;
@@ -244,19 +260,7 @@ public class Util extends FGUtilCore implements Listener {
 
         for (int x = Math.min(loc1.getBlockX(), loc2.getBlockX()); x<=Math.max(loc1.getBlockX(), loc2.getBlockX());x++)
             for (int z = Math.min(loc1.getBlockZ(), loc2.getBlockZ()); z<=Math.max(loc1.getBlockZ(), loc2.getBlockZ());z++)
-                for (int y = Math.min(loc1.getBlockY(), loc2.getBlockY()); y<=Math.max(loc1.getBlockY(), loc2.getBlockY());y++)
-
-        
-        /*Location min = new Location (loc1.getWorld(), Math.min(loc1.getBlockX(), loc2.getBlockX()),
-                Math.min(loc1.getBlockY(), loc2.getBlockY()),Math.min(loc1.getBlockZ(), loc2.getBlockZ()));
-        Location max = new Location (loc1.getWorld(), Math.max(loc1.getBlockX(), loc2.getBlockX()),
-                Math.max(loc1.getBlockY(), loc2.getBlockY()),Math.max(loc1.getBlockZ(), loc2.getBlockZ()));
-        for (int x = min.getBlockX(); x<=max.getBlockX();x++)
-                for (int z = min.getBlockZ(); x<=max.getBlockZ();z++)
-                    for (int y = min.getBlockY(); y<=max.getBlockY();y++) */
-                    
-                    
-                    {
+                for (int y = Math.min(loc1.getBlockY(), loc2.getBlockY()); y<=Math.max(loc1.getBlockY(), loc2.getBlockY());y++){
                     Block b = loc1.getWorld().getBlockAt(x, y, z); 
                     if (b.getType()!=Material.AIR) continue;
                     if (land&&b.getRelative(BlockFace.DOWN).getType()==Material.AIR) continue;
@@ -264,7 +268,7 @@ public class Util extends FGUtilCore implements Listener {
                 }
         return cube;
     }
-    
+
     public static List<Location> buildLine (Location loc1, Location loc2){
         List<Location> line = new ArrayList<Location>();
         int dx = Math.max(loc1.getBlockX(), loc2.getBlockX())-Math.min(loc1.getBlockX(), loc2.getBlockX());
@@ -330,7 +334,7 @@ public class Util extends FGUtilCore implements Listener {
         if ((y>=x)&&(y>=z)) return 2;
         return 3;
     }
-    
+
     public static List<Location> refilterLocations (List<Location> locs, int amount){
         if (amount<=0) return locs;
         if (locs.size()<=amount) return locs;
@@ -341,9 +345,9 @@ public class Util extends FGUtilCore implements Listener {
             out.add(locs.get(i));
         return out;
     }
-    
-    
-    
+
+
+
     public static List<Location> sort (List<Location> locs){
         int i = 0;
         int j = locs.size()-1;
@@ -351,54 +355,55 @@ public class Util extends FGUtilCore implements Listener {
         do {
             while (locs.get(i).hashCode()<x) ++i;
             while (locs.get(j).hashCode()>x) --j;
-            
+
             if (i<=j){
                 Location temp = locs.get(i);
                 locs.set(i, locs.get(j));
                 locs.set(j,temp);
                 i++; j--;
             }
-            
+
         } while (i<=j);
         return locs;
     }
-    
+
     public static Long timeToTicks(Long time){
         return Math.max(1, (time/50));
     }
-    
+
     public static Long parseTime(String time){
+        if (time.isEmpty()) return 0L;
         int hh = 0; // часы
         int mm = 0; // минуты
         int ss = 0; // секунды
         int tt = 0; // тики
         int ms = 0; // миллисекунды
-        if (PlayEffect.instance.u.isInteger(time)){
+        if (plg().u.isInteger(time)){
             ss = Integer.parseInt(time);
         } else if (time.matches("^[0-5][0-9]:[0-5][0-9]$")){
             String [] ln = time.split(":");
-            if (PlayEffect.instance.u.isInteger(ln[0])) mm = Integer.parseInt(ln[0]);
-            if (PlayEffect.instance.u.isInteger(ln[1])) ss = Integer.parseInt(ln[1]);
+            if (plg().u.isInteger(ln[0])) mm = Integer.parseInt(ln[0]);
+            if (plg().u.isInteger(ln[1])) ss = Integer.parseInt(ln[1]);
         } else if (time.matches("^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$")){
             String [] ln = time.split(":");
-            if (PlayEffect.instance.u.isInteger(ln[0])) hh = Integer.parseInt(ln[0]);
-            if (PlayEffect.instance.u.isInteger(ln[1])) mm = Integer.parseInt(ln[1]);
-            if (PlayEffect.instance.u.isInteger(ln[2])) ss = Integer.parseInt(ln[2]);
+            if (plg().u.isInteger(ln[0])) hh = Integer.parseInt(ln[0]);
+            if (plg().u.isInteger(ln[1])) mm = Integer.parseInt(ln[1]);
+            if (plg().u.isInteger(ln[2])) ss = Integer.parseInt(ln[2]);
         } else if (time.endsWith("ms")) {
             String s = time.replace("ms", "");
-            if (PlayEffect.instance.u.isInteger(s)) ms = Integer.parseInt(s);
+            if (plg().u.isInteger(s)) ms = Integer.parseInt(s);
         } else if (time.endsWith("h")) {
             String s = time.replace("h", "");
-            if (PlayEffect.instance.u.isInteger(s)) hh = Integer.parseInt(s);
+            if (plg().u.isInteger(s)) hh = Integer.parseInt(s);
         } else if (time.endsWith("m")) {
             String s = time.replace("m", "");
-            if (PlayEffect.instance.u.isInteger(s)) mm = Integer.parseInt(s);
+            if (plg().u.isInteger(s)) mm = Integer.parseInt(s);
         } else if (time.endsWith("s")) {
             String s = time.replace("s", "");
-            if (PlayEffect.instance.u.isInteger(s)) ss = Integer.parseInt(s);
+            if (plg().u.isInteger(s)) ss = Integer.parseInt(s);
         } else if (time.endsWith("t")) {
             String s = time.replace("t", "");
-            if (PlayEffect.instance.u.isInteger(s)) tt = Integer.parseInt(s);
+            if (plg().u.isInteger(s)) tt = Integer.parseInt(s);
         }
 
         /*
@@ -413,7 +418,7 @@ public class Util extends FGUtilCore implements Listener {
 
 
 
-    
+
     @EventHandler(priority=EventPriority.NORMAL)
     public void onPlayerInteract (PlayerInteractEvent event){
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
@@ -423,7 +428,12 @@ public class Util extends FGUtilCore implements Listener {
         if (!compareItemStr(p.getItemInHand(), plg.wand_item)) return;
         Wand.toggleEffect(p, event.getClickedBlock());
     }
-    
-    
+
+    @EventHandler(priority=EventPriority.NORMAL)
+    public void onPlayerJoin (PlayerJoinEvent event){
+        Wand.clearWand(event.getPlayer());
+        plg.u.updateMsg(event.getPlayer());
+    }
+
 }
 
