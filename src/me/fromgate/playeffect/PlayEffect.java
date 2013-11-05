@@ -78,6 +78,20 @@ public class PlayEffect extends JavaPlugin {
         Effects.playEffect(effect, param+" loc:"+Util.locationToStrLoc(loc));
     }
     
+    public static void play (VisualEffect effect, Location loc, Map<String,String> params){
+        if (effect == null) return;
+        if (loc == null) return;
+        params.put("loc", Util.locationToStrLoc(loc));
+        Effects.playEffect(effect, params);
+    }
+    
+    public static void play (String effect, Location loc, Map<String,String> params){
+        if (!VisualEffect.contains(effect)) return;
+        if (loc == null) return;
+        VisualEffect ve = VisualEffect.valueOf(effect.toUpperCase());
+        play (ve,loc,params);
+    }
+
     public static void play (VisualEffect effect, String param){
         Effects.playEffect(effect, param);
     }

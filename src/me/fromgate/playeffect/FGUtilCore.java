@@ -192,9 +192,10 @@ public abstract class FGUtilCore {
         if (!project_check_version) return false;
         if (project_id.isEmpty()) return false;
         if (project_apikey.isEmpty()) return false;
+        if (project_current_version.isEmpty()) return false;
         if (project_current_version.equalsIgnoreCase(project_last_version)) return false;
-        double current_version = Double.parseDouble(this.project_current_version.replaceFirst("\\.", "").replace("/", ""));
-        double last_version = Double.parseDouble(this.project_last_version.replaceFirst("\\.", "").replace("/", ""));
+        double current_version = Double.parseDouble(project_current_version.replaceFirst("\\.", "").replace("/", ""));
+        double last_version = Double.parseDouble(project_last_version.replaceFirst("\\.", "").replace("/", ""));
         return (last_version>current_version);
     }
 

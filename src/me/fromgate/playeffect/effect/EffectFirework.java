@@ -38,6 +38,7 @@ public class EffectFirework extends BasicEffect {
         if (ftypernd) ftype = FireworkEffect.Type.values()[PlayEffect.instance.u.getRandomInt(FireworkEffect.Type.values().length)];
         if (colorrnd) color = Util.colorByName(getParam ("color","random"), Color.YELLOW);
         final FireworkEffect fe = FireworkEffect.builder().with(ftype).withColor(color).flicker(true).build();
+        
         Bukkit.getScheduler().runTask(PlayEffect.instance, new Runnable(){
             @Override
             public void run() {
