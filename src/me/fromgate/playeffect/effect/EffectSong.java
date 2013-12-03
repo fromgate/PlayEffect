@@ -1,16 +1,10 @@
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.Util;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 
 public class EffectSong extends BasicEffect {
-//String [] songs = {"13","cat","blocks","chirp","far","mall","mellohi","stal","strad","ward","11disc","wait"};
-    //Long [] muslen = {177000L, 192000L, 352000L, 186000L, 169000L, 203000L, 101000L, 152000L, 189000L, 249000L, 72000L, 240000L};
-    
     SongType st = SongType.DISC13;
-    
-    
     @Override
     public void onInit(){
         String disc = getParam("disc","DISC13");
@@ -33,7 +27,7 @@ public class EffectSong extends BasicEffect {
 
     @Override
     public long getRepeatTick(){
-        return Util.timeToTicks(st.getLength());
+        return u().timeToTicks(st.getLength());
     }
     
     enum SongType{

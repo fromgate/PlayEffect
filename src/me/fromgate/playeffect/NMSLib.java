@@ -17,7 +17,7 @@ public class NMSLib {
     private static PlayEffect plg(){
         return PlayEffect.instance;
     }
-    private static String [] tested_versions = {"v1_6_R2","v1_6_R3"};
+    private static String [] tested_versions = {"v1_6_R2","v1_6_R3","v1_7_R1"};
     private static boolean disabled = true;
     private static boolean activated = false;
     private static String obcPrefix = "org.bukkit.craftbukkit.";
@@ -42,8 +42,13 @@ public class NMSLib {
     private static Method broadcastEntityEffect;
     private static Class<?> CraftFirework;
     private static Method firework_getHandle;
+    private static Class<?> EntityFireworks;
+    private static Field expectedLifespan;
+    private static Field ticksFlown;
     private static Class<?> NmsWorld;
     private static Class<?> NmsEntity;
+    
+    
 
     public static void init(){
         if (activated) return;
@@ -59,7 +64,7 @@ public class NMSLib {
             ChunkPosition = Class.forName(nmsPrefix+"ChunkPosition");
             Vec3D = Class.forName(nmsPrefix+"Vec3D");
             Packet = Class.forName(nmsPrefix+"Packet");
-            Packet60Explosion = Class.forName(nmsPrefix+"Packet60Explosion");
+            Packet60Explosion = Class.forName(nmsPrefix+(version.startsWith("1_6") ? "Packet60Explosion ": "PacketPlayOutExplosion")); 
             CraftServer = Class.forName(obcPrefix+"CraftServer");
             CraftWorld = Class.forName(obcPrefix+"CraftWorld");
             DedicatedPlayerList = Class.forName(nmsPrefix+"DedicatedPlayerList");
@@ -70,10 +75,14 @@ public class NMSLib {
             getHandleCW = CraftWorld.getMethod("getHandle");
             dimensionField = WorldServer.getField("dimension");
             newPacket = Packet60Explosion.getConstructor(double.class,double.class,double.class,float.class,List.class,Vec3D);
-            Packet63WorldParticles = Class.forName(nmsPrefix+"Packet63WorldParticles");
+            Packet63WorldParticles = Class.forName(nmsPrefix+(version.startsWith("1_6") ? "Packet63WorldParticles" : "PacketPlayOutWorldParticles"));
             world_getHandle = CraftWorld.getMethod("getHandle"); 
             CraftFirework = Class.forName(obcPrefix+"entity.CraftFirework");
-            firework_getHandle = CraftFirework.getMethod("getHandle");
+            firework_getHandle = CraftFirework.getMethod("getHandle"); //EntityFireworks
+            EntityFireworks = Class.forName(nmsPrefix+"EntityFireworks");
+            expectedLifespan = EntityFireworks.getField("expectedLifespan");
+            ticksFlown = EntityFireworks.getField("expectedLifespan");
+            ticksFlown.setAccessible(true);
             NmsWorld = Class.forName(nmsPrefix+"World");
             NmsEntity = Class.forName(nmsPrefix+"Entity");
             broadcastEntityEffect = NmsWorld.getMethod("broadcastEntityEffect",NmsEntity ,byte.class);
@@ -81,7 +90,7 @@ public class NMSLib {
         } catch (Exception e) {
             log("Failed to initialize NMSLib! Some features of plugin will be disabled!");
             log("Please download compatible version from: http://dev.bukkit.org/bukkit-plugins/playeffect/");
-            
+
             e.printStackTrace();
             disabled = true;
         }
@@ -89,7 +98,7 @@ public class NMSLib {
     }
 
     private static void log(String string) {
-       plg().u.log(string);
+        plg().u.log(string);
     }
 
     public static boolean isTestedVersion(){
@@ -98,7 +107,11 @@ public class NMSLib {
         }
         return false;
     }
-    
+
+    public static String getVersion(){
+        return version;
+    }
+
     public static void isTestedInform(){
         if (isTestedVersion()) return;
         log("Warning! PlayEffect was not tested with craftbukkit version "+version.replace("_", "."));
@@ -165,7 +178,7 @@ public class NMSLib {
             Object worldServer = getHandleCW.invoke(loc.getWorld());
             int dimension = dimensionField.getInt(worldServer);
             sendPacketNearby.invoke(handleCraftServer, loc.getX(), loc.getY(), loc.getZ(),64,dimension,sPacket);
-        } catch (Exception e){
+        } catch (Exception e){  
             disabled = true;
             log("Failed to create particles effect.");        }
 
@@ -177,17 +190,37 @@ public class NMSLib {
             Firework fw = (Firework) world.spawn(loc, Firework.class);
             Object nms_world = null;
             Object nms_firework = null;
-            nms_world = world_getHandle.invoke(world, (Object[]) null);
+            //nms_world = world_getHandle.invoke(world, (Object[]) null);
             nms_world = world_getHandle.invoke(world);
-            nms_firework = firework_getHandle.invoke(fw, (Object[]) null);
+            //nms_firework = firework_getHandle.invoke(fw, (Object[]) null);
+            nms_firework = firework_getHandle.invoke(fw);
             FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
             data.clearEffects();
             data.setPower(1);
             data.addEffect(fe);
             fw.setFireworkMeta(data);
-            broadcastEntityEffect.invoke(nms_world, new Object[] {nms_firework, (byte) 17});
+            //broadcastEntityEffect.invoke(nms_world, new Object[] {nms_firework, (byte) 17});
+            broadcastEntityEffect.invoke(nms_world, nms_firework, (byte) 17);
             fw.remove();
         } catch (Exception e){
+            disabled = true;
+            log("Failed to create firework effect.");
+        }
+    } 
+
+    public static void playFireworkRocket(World world, Location loc, FireworkEffect fe){
+        if (disabled) return;
+        Firework fw = (Firework) world.spawn(loc, Firework.class);
+        FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
+        data.clearEffects();
+        data.setPower(0);
+        data.addEffect(fe);
+        fw.setFireworkMeta(data);
+        try{
+            Object nms_firework = firework_getHandle.invoke(fw);
+            expectedLifespan.set(nms_firework, (int) 0);
+            ticksFlown.set(nms_firework, (int) 1);
+        }catch(Exception e){
             disabled = true;
             log("Failed to create firework effect.");
         }

@@ -32,13 +32,17 @@ public abstract class BasicEffect {
     private boolean land = false; // land:true
     private List<Location> cache  = new ArrayList<Location>();
 
+    Util u(){
+        return PlayEffect.instance.u;
+    }
+    
     public void initEffect(VisualEffect effecttype, Location loc, Map<String,String> params){
         this.type = effecttype;
         this.params = params;
         this.loc = loc;
         this.land = getParam("land",false);
-        dur =  Util.parseTime(getParam("dur", "0"));
-        if (dur>0) freq = Math.max(type.getRepeatTicks(), Util.timeToTicks(Util.parseTime(getParam("freq", type.getRepeatTicks()+"t"))));
+        dur =  u().parseTime(getParam("dur", "0"));
+        if (dur>0) freq = Math.max(type.getRepeatTicks(), u().timeToTicks(u().parseTime(getParam("freq", type.getRepeatTicks()+"t"))));
         String loc2str = getParam("loc2","");
         if (!loc2str.isEmpty()) loc2 = Util.parseLocation(loc2str);
         radius = getParam("radius",0);
@@ -216,7 +220,7 @@ public abstract class BasicEffect {
     }
 
     public long getRepeatTick(){
-        return Math.max(type.getRepeatTicks(), Util.timeToTicks(this.dur));
+        return Math.max(type.getRepeatTicks(), u().timeToTicks(this.dur));
     }
 
     public DrawType getDrawType(){

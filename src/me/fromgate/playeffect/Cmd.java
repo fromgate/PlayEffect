@@ -1,8 +1,11 @@
 package me.fromgate.playeffect;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.fromgate.playeffect.effect.BasicEffect;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -149,7 +152,12 @@ public class Cmd implements CommandExecutor{
     }
 
     private boolean playEffect(CommandSender sender, String cmd, String arg) {
-        if ((!(sender instanceof Player))&&(!arg.contains("loc:"))) {
+        Map<String,String> params = Effects.parseParams(arg);
+        Player player = null;
+        String paramPlayer = Effects.getParam(params, "player", "");
+        if (!paramPlayer.isEmpty()) player = Bukkit.getPlayerExact(paramPlayer);
+        if((player==null)&&(sender instanceof Player)) player = (Player) sender; 
+        if ((player==null)&(!arg.contains("loc:"))) {
             plg.u.printMSG(sender, "msg_consoleneedcoord",cmd+" "+arg);
         }
         VisualEffect ve = getVisualEffect(cmd);
@@ -157,8 +165,8 @@ public class Cmd implements CommandExecutor{
             plg.u.printMSG(sender, "msg_wrongeffect",cmd);
             return false;
         }
-        arg = processLocation(sender, arg);
-        Effects.playEffect(ve,  arg);
+        params = processLocation(sender, params);
+        Effects.playEffect(ve,  params);
         return true;
     }
 
@@ -210,6 +218,7 @@ public class Cmd implements CommandExecutor{
     }
 
 
+    @Deprecated
     private String processLocation(CommandSender sender, String param){
         String arg = param;
         if ((sender instanceof Player)) {
@@ -233,4 +242,37 @@ public class Cmd implements CommandExecutor{
         return arg;
     }
 
+
+    private Map<String,String> processLocation(CommandSender sender, Map<String,String> params){
+        Map<String,String> newparams = new HashMap<String,String>();
+        if (!params.containsKey("loc")) params.put("loc", "view");
+        if (!params.containsKey("loc2")) params.put("loc2", "eye");
+
+        
+        if ((sender instanceof Player)) {
+            Player p = (Player)sender;
+            for (String key : params.keySet()){
+                //newparams.put(key, params.get(key));
+                String value = params.get(key);
+                if (key.equalsIgnoreCase("loc")||key.equalsIgnoreCase("loc2")){
+                    if (value.equalsIgnoreCase("wg1")||value.equalsIgnoreCase("wg2")){
+                        if (WEGLib.isWE()){
+                            List<Location> locs = WEGLib.getSelectionLocations(p);
+                            if (locs.size()>0){
+                                if(value.equalsIgnoreCase("wg1")) value = Util.locationToStrLoc(locs.get(0));
+                                if(value.equalsIgnoreCase("wg2")) value = Util.locationToStrLoc(locs.get(1));    
+                            }
+                        }
+                    } else if (value.equalsIgnoreCase("here")) value = Util.locationToStrLoc(p.getLocation());
+                    else if (value.equalsIgnoreCase("view")) value = Util.locationToStrLoc(getTargetBlockFaceLocation (p));
+                    else if (value.equalsIgnoreCase("eye")) value = Util.locationToStrLoc(p.getEyeLocation());
+                }
+                newparams.put(key, value);
+            }
+            
+            
+            return newparams;
+        }
+        return params;
+    }
 }

@@ -1,6 +1,7 @@
 package me.fromgate.playeffect;
 
 import me.fromgate.playeffect.effect.BasicEffect;
+import me.fromgate.playeffect.effect.EffectBlockCrackSound;
 import me.fromgate.playeffect.effect.EffectExplosion;
 import me.fromgate.playeffect.effect.EffectEye;
 import me.fromgate.playeffect.effect.EffectFirework;
@@ -55,8 +56,11 @@ public enum VisualEffect  {
     HEART(EffectParticles.class,"effectname:heart num:2",5,"num,speed,offset,offsetX,offsetY,offsetZ"),
     ANGRY(EffectParticles.class,"effectname:angryVillager num:5",5,"num,speed,offset,offsetX,offsetY,offsetZ"),
     HAPPY(EffectParticles.class,"effectname:happyVillager num:5",5,"num,speed,offset,offsetX,offsetY,offsetZ"),
-    TILECRACK(EffectParticles.class,"effectname:tilecrack_ num:5 item:GLASS:0",5,"num,speed,offset,offsetX,offsetY,offsetZ,item"),
     ICONCRACK(EffectParticles.class,"effectname:iconcrack_ num:5 item:GLASS:0",5,"num,speed,offset,offsetX,offsetY,offsetZ,item"),
+    TILECRACK(EffectParticles.class,"effectname:tilecrack_ num:5 item:GLASS:0",5,"num,speed,offset,offsetX,offsetY,offsetZ,item"),
+    BLOCKCRACK(EffectParticles.class,"effectname:blockcrack_ num:5 item:GLASS:0",5,"num,speed,offset,offsetX,offsetY,offsetZ,item"),
+    BLOCKCRACKSOUND(EffectBlockCrackSound.class,"item:GLASS:0",5,"item"),
+    BLOCKDUST(EffectParticles.class,"effectname:blockdust_ num:5 item:GLASS:0",5,"num,speed,offset,offsetX,offsetY,offsetZ,item"),
     FIREWORK(EffectFirework.class,"",128,20,"type,color"),
     SOUND(EffectSound.class,"",128,10,"type,pitch,volume"),
     SONG(EffectSong.class,"",128,5,"disc");
@@ -66,7 +70,7 @@ public enum VisualEffect  {
     private long min_rpt_time;
     private String paramlist;
     private int distance;
-
+    
 
     private VisualEffect (Class<? extends BasicEffect> clazz, String param, int distance, long minrpt, String paramlist){
         this.clazz = clazz;
@@ -116,12 +120,23 @@ public enum VisualEffect  {
     }
 
     public static boolean contains(String id){
+        String vn = id;
+        if (vn.equalsIgnoreCase("tilecrack")) vn = "blockcrack";
         for (VisualEffect ve :VisualEffect.values()){
             if (ve == VisualEffect.BASIC) continue;
-            if (ve.name().equalsIgnoreCase(id)) return true;
+            if (ve.name().equalsIgnoreCase(vn)) return true;
         }
         return false;
     }
+
+    public static VisualEffect getEffectByName(String name){
+        String vn = name;
+        if (vn.equalsIgnoreCase("tilecrack")) vn = "blockcrack";
+        for (VisualEffect ve : VisualEffect.values())
+            if (ve.name().equalsIgnoreCase(vn)) return ve;
+        return null;
+    }
+    
 
 }
 

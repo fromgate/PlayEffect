@@ -4,6 +4,7 @@ import me.fromgate.playeffect.NMSLib;
 import me.fromgate.playeffect.PlayEffect;
 
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 public class EffectParticles extends BasicEffect {
     private String effectname = "cloud";
@@ -12,23 +13,33 @@ public class EffectParticles extends BasicEffect {
     private float offsetZ = 0f;
     private float speed = 0.1f;
     private int number = 10;
-    
+
     @Override
     @SuppressWarnings("deprecation")
     public void onInit(){
         effectname = getParam ("effectname","cloud");
-        if (effectname.equalsIgnoreCase("tilecrack_")) effectname = effectname + PlayEffect.instance.u.parseItemStack(getParam("item","GLASS:0")).getTypeId()+"_"+
-                PlayEffect.instance.u.parseItemStack(getParam("item","GLASS:0")).getDurability();
-        else if (effectname.equalsIgnoreCase("iconcrack_")) effectname = effectname + PlayEffect.instance.u.parseItemStack(getParam("item","GLASS:0")).getTypeId();
+        if (NMSLib.getVersion().startsWith("v1_6")||NMSLib.getVersion().startsWith("v1_5")){
+            if (effectname.equalsIgnoreCase("blockcrack_")) effectname = "tilecrack_";
+            if (effectname.equalsIgnoreCase("blockdust_")) effectname = "tilecrack_";
+        } else if (effectname.equalsIgnoreCase("tilecrack_")) effectname = "blockcrack_";
+        if (effectname.endsWith("_")) {
+            ItemStack item = PlayEffect.instance.u.parseItemStack(getParam("item","GLASS:0"));
+            if (item==null){
+                u().logOnce("itemparsefail_"+getParam("item","GLASS:0"), "Failed to play effect "+this.getType().name()+". Wrong block (item) type: "+getParam("item","GLASS:0"));
+                return;
+            }
+            effectname = effectname + item.getTypeId()+"_"+item.getDurability();
+        }
+
         number = getParam("num", number);
         speed = getParam("speed",0.1f);
         offsetX = getParam("offsetX",getParam("offset",0f));
         offsetY = getParam("offsetY",getParam("offset",0f));
         offsetZ = getParam("offsetZ",getParam("offset",0f));
     }
-    
-   
-    
+
+
+
     @Override
     protected void play(Location l) {
         Location loc = l;
@@ -44,77 +55,6 @@ public class EffectParticles extends BasicEffect {
         loc.setZ(loc.getBlockZ()+0.5);
         NMSLib.sendParticlesPacket(loc, effectname, offsetX, offsetY, offsetZ, speed, number);
     }
-    
-    
-    
-    
-    /*
-     * 
-     * 
-     * Smoke    "smoke"
-Large Smoke     "largesmoke"
-Block b reaking anim.    "iconcrack_"
-Snowball/Egg break/Iron Golem creation  "snowballpoof"
-Tool break  "tilecrack_"
-Nether Portal/Eye of Ender /Dragon egg/enderman and ender chest     "portal"
-Water Splash    "splash"
-Water Bubbles   "bubble"
-Mycelium spores     "townaura"
-Explosion   "hugeexplosion"
-Flame   "flame"
-Heart   "heart"
-Cloud   "cloud"
-Critical Hit Spark  "crit"
-Magic Weapon Critical Spark     "magicCrit"
-Note Block  "note"
-Magic Runes     "enchantmenttable"
-Lava Spark  "lava"
-Footsteps   "footstep"
-Redstone Fumes  "reddust"
-Water Dripping  "dripWater"
-Lava Dripping   "dripLava"
-Slime Splatter  "slime"
-     * 
-     * 
-     * 
-hugeexplosion
-largeexplode
-fireworksSpark
 
-- bubble
-suspended
-depthsuspend
-+ townaura
-
-crit
-magicCrit
-smoke
-mobSpell
-mobSpellAmbient
-spell
-instantSpell
-+ witchMagic
-+ note
-+ portal
-+ enchantmenttable //RUNES
-+ explode
-+ flame
-+ lava
-+ footstep
-+ splash
-+ largesmoke
-+ cloud
-+ reddust
-+ snowballpoof
-+ dripWater
-+ dripLava
-+ snowshovel
-+ slime
-+ heart
-+ angryVillager
-+ happyVillager
-iconcrack_*
-tilecrack_*_*
-     */
 }
 

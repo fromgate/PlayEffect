@@ -39,6 +39,9 @@ public class Effects {
     }
 
 
+    public static boolean getFireworkRocketDefault(){
+        return plg().firework_rocket;
+    }
 
     public int countEffectsId (String id){
         int count = 0;
@@ -49,7 +52,7 @@ public class Effects {
 
     public static boolean createStaticEffect (BasicEffect be, String id, String time, boolean run){
         if (be == null) return false;
-        Long rpt = Util.timeToTicks(Util.parseTime(time));
+        Long rpt = u().timeToTicks(u().parseTime(time));
         if (!addStaticEffect(new StaticEffect (id,be,rpt))) return false;
         saveEffects();        
         return true;
@@ -63,7 +66,7 @@ public class Effects {
 
     public static boolean createStaticEffect (BasicEffect be, boolean save){
         if (be == null) return false;
-        Long rpt = Util.timeToTicks(Util.parseTime(be.getParam("time")));
+        Long rpt = u().timeToTicks(u().parseTime(be.getParam("time")));
         String id = getId(be.getParam("id",""));
         if (!addStaticEffect(new StaticEffect (id,be,rpt))) return false;
         if (save) saveEffects();
@@ -256,6 +259,7 @@ public class Effects {
                 params.put(key, cs.getString(key));
             String vestr = Effects.getParam(params, "effect", "");
             if (vestr.isEmpty()) continue;
+            if (vestr.equalsIgnoreCase("TILECRACK")) vestr = "BLOCKCRACK"; // rename accordint 1.7 changes
             if (!VisualEffect.contains(vestr)) continue;
             ve = VisualEffect.valueOf(vestr);
             if (ve == null) continue;

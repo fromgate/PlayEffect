@@ -27,7 +27,7 @@ public class Util extends FGUtilCore implements Listener {
     }
 
     public Util(PlayEffect plugin, boolean savelng, String language, String plgcmd){
-        super (plugin, savelng, language, plgcmd);
+        super (plugin, savelng, language, plgcmd,"playeffect");
         this.plg = plugin;
         InitCmd();
         initMessages();
@@ -367,56 +367,9 @@ public class Util extends FGUtilCore implements Listener {
         return locs;
     }
 
-    public static Long timeToTicks(Long time){
+    /*public static Long timeToTicks(Long time){
         return Math.max(1, (time/50));
-    }
-
-    public static Long parseTime(String time){
-        if (time.isEmpty()) return 0L;
-        int hh = 0; // часы
-        int mm = 0; // минуты
-        int ss = 0; // секунды
-        int tt = 0; // тики
-        int ms = 0; // миллисекунды
-        if (plg().u.isInteger(time)){
-            ss = Integer.parseInt(time);
-        } else if (time.matches("^[0-5][0-9]:[0-5][0-9]$")){
-            String [] ln = time.split(":");
-            if (plg().u.isInteger(ln[0])) mm = Integer.parseInt(ln[0]);
-            if (plg().u.isInteger(ln[1])) ss = Integer.parseInt(ln[1]);
-        } else if (time.matches("^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$")){
-            String [] ln = time.split(":");
-            if (plg().u.isInteger(ln[0])) hh = Integer.parseInt(ln[0]);
-            if (plg().u.isInteger(ln[1])) mm = Integer.parseInt(ln[1]);
-            if (plg().u.isInteger(ln[2])) ss = Integer.parseInt(ln[2]);
-        } else if (time.endsWith("ms")) {
-            String s = time.replace("ms", "");
-            if (plg().u.isInteger(s)) ms = Integer.parseInt(s);
-        } else if (time.endsWith("h")) {
-            String s = time.replace("h", "");
-            if (plg().u.isInteger(s)) hh = Integer.parseInt(s);
-        } else if (time.endsWith("m")) {
-            String s = time.replace("m", "");
-            if (plg().u.isInteger(s)) mm = Integer.parseInt(s);
-        } else if (time.endsWith("s")) {
-            String s = time.replace("s", "");
-            if (plg().u.isInteger(s)) ss = Integer.parseInt(s);
-        } else if (time.endsWith("t")) {
-            String s = time.replace("t", "");
-            if (plg().u.isInteger(s)) tt = Integer.parseInt(s);
-        }
-
-        /*
-        ms = ms
-        ticks = tt*50
-        sec = ss*1000
-        min = mm*1000*60 = 60000
-        hour == hh*60*60*1000 =3600000
-         */
-        return (long) ((hh*3600000)+(mm*60000)+(ss*1000)+(tt*50)+ms);
-    }
-
-
+    }*/
 
 
     @EventHandler(priority=EventPriority.NORMAL)
