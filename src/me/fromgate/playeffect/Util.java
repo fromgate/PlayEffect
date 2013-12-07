@@ -30,27 +30,12 @@ public class Util extends FGUtilCore implements Listener {
         super (plugin, savelng, language, plgcmd,"playeffect");
         this.plg = plugin;
         InitCmd();
-        initMessages();
         if (savelng) this.SaveMSG();
     }
 
 
-    private void initMessages(){
-        addMSG("msg_outdated", "%1% is outdated!");
-        addMSG("msg_pleasedownload", "Please download new version (%1%) from ");
-        addMSG("hlp_help", "Help");
-        addMSG("hlp_thishelp", "%1% - this help");
-        addMSG("hlp_execcmd", "%1% - execute command");
-        addMSG("hlp_typecmd", "Type %1% - to get additional help");
-        addMSG("hlp_typecmdpage", "Type %1% - to see another page of this help");
-        addMSG("hlp_commands", "Command list:");
-        addMSG("hlp_cmdparam_command", "command");
-        addMSG("hlp_cmdparam_page", "page");
-        addMSG("hlp_cmdparam_parameter", "parameter");
-        addMSG("cmd_unknown", "Unknown command: %1%");
-        addMSG("cmd_cmdpermerr", "Something wrong (check command, permissions)");
-        addMSG("enabled", "enabled");
-        addMSG("disabled", "disabled");
+    @Override
+    public void initMessages(){
         addMSG("lst_title", "String list:");
         addMSG("lst_footer", "Page: [%1% / %2%]");
         addMSG("lst_listisempty", "List is empty");
@@ -101,6 +86,9 @@ public class Util extends FGUtilCore implements Listener {
         addMSG("hlp_angry", "%1% - play Angry villager effect");
         addMSG("hlp_happy", "%1% - play Happy villager effect");
         addMSG("hlp_tilecrack", "%1% - play Tile crack effect");
+        addMSG("hlp_blockcrack", "%1% - play Block crack effect");
+        addMSG("hlp_blockcracksound", "%1% - play Block crack effect with break sound");
+        addMSG("hlp_blockdust", "%1% - play Block dust effect");
         addMSG("hlp_iconcrack", "%1% - play Icon crack effect");
         addMSG("hlp_firework", "%1% - play Firework effect");
         addMSG("hlp_sound", "%1% - play Sound effect");
@@ -113,16 +101,12 @@ public class Util extends FGUtilCore implements Listener {
         addMSG("msg_wandenabled", "Wand mode enabled");
         addMSG("msg_seteffect", "Effect set %1% (%2%)");
         addMSG("msg_removed", "Effect %1% removed");
-        addMSG("hlp_show", "Unknown message (hlp_show)");
-        addMSG("hlp_hide", "Unknown message (hlp_hide)");
-        addMSG("hlp_resart", "Unknown message (hlp_resart)");
-        addMSG("hlp_reload", "Unknown message (hlp_reload)");
         addMSG("msg_efflist", "Effect list");
         addMSG("msg_efflistempty", "Effect list is empty");
         addMSG("msg_efflist", "Effect list");
         addMSG("msg_efflistempty", "Effect list is empty");
         addMSG("hlp_show", "%1% - show effect(s)");
-        addMSG("hlp_show", "%1% - hide effect(s)");
+        addMSG("hlp_hide", "%1% - hide effect(s)");
         addMSG("hlp_resart", "%1% - restart static effects");
         addMSG("hlp_reload", "%1% - reload configuration");
         addMSG("hlp_check", "%1% - find effect around you");

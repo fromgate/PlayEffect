@@ -190,16 +190,13 @@ public class NMSLib {
             Firework fw = (Firework) world.spawn(loc, Firework.class);
             Object nms_world = null;
             Object nms_firework = null;
-            //nms_world = world_getHandle.invoke(world, (Object[]) null);
             nms_world = world_getHandle.invoke(world);
-            //nms_firework = firework_getHandle.invoke(fw, (Object[]) null);
             nms_firework = firework_getHandle.invoke(fw);
             FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
             data.clearEffects();
             data.setPower(1);
             data.addEffect(fe);
             fw.setFireworkMeta(data);
-            //broadcastEntityEffect.invoke(nms_world, new Object[] {nms_firework, (byte) 17});
             broadcastEntityEffect.invoke(nms_world, nms_firework, (byte) 17);
             fw.remove();
         } catch (Exception e){

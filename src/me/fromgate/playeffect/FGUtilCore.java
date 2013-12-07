@@ -209,6 +209,10 @@ public abstract class FGUtilCore {
     /* 
      * Инициализация стандартных сообщений
      */
+    
+    public void initMessages(){
+    }
+    
     private void initStdMsg(){
         addMSG ("msg_outdated", "%1% is outdated!");
         addMSG ("msg_pleasedownload", "Please download new version (%1%) from ");
@@ -234,6 +238,7 @@ public abstract class FGUtilCore {
         addMSG ("cfgmsg_general_check-updates", "Check updates: %1%");
         addMSG ("cfgmsg_general_language", "Language: %1%");
         addMSG ("cfgmsg_general_language-save", "Save translation file: %1%");
+        initMessages();
     }
 
 

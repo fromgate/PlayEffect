@@ -73,7 +73,7 @@ public class PlayEffect extends JavaPlugin {
         queue_tick_interval = getConfig().getInt("effects.queue.tick-interval",1);
         play_sound_smoke = getConfig().getBoolean("effects.play-smoke-for-sound",false);
         wand_item=getConfig().getString("effects.wand-item","COAL");
-        firework_rocket=getConfig().getBoolean("effects.firework-play-rocket-sound",false);
+        firework_rocket=getConfig().getBoolean("effects.firework-play-rocket-sound",true);
     }
 
 
