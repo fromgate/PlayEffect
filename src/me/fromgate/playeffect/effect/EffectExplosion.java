@@ -1,14 +1,16 @@
 package me.fromgate.playeffect.effect;
 
 
-import me.fromgate.playeffect.NMSLib;
+import me.fromgate.playeffect.customeffects.AdditionalEffects;
+
 import org.bukkit.Location;
 
 public class EffectExplosion extends BasicEffect {
     
     @Override
     protected void play(Location loc) {
-        NMSLib.sendExplosionPacket(loc, 5);
+    	float size = getParam("size",1.5f);
+    	AdditionalEffects.sendExplosionPacket(loc, size);
     }
 
 }

@@ -39,10 +39,6 @@ public class Effects {
     }
 
 
-    public static boolean getFireworkRocketDefault(){
-        return plg().firework_rocket;
-    }
-
     public int countEffectsId (String id){
         int count = 0;
         for (StaticEffect se :effects)

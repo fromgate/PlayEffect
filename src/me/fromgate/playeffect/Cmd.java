@@ -73,7 +73,8 @@ public class Cmd implements CommandExecutor{
             int radius = 8;
             if (plg.u.isIntegerGZ(arg)) radius = Integer.parseInt(arg);
             Effects.printAroundEffects((Player) sender, radius);
-        } else return false;
+        } else plg.u.printMSG(sender, "msg_wrongeffect",cmd);//return false;
+        //plg.u.printMSG(sender, "msg_wrongeffect",cmd);
         return true;
     }
 
@@ -98,7 +99,7 @@ public class Cmd implements CommandExecutor{
             Effects.printEffectsList(sender, page,id);
         }else if(cmd.equalsIgnoreCase("wand")){
             return setWandMode(sender, arg1, arg2);
-        } else return false;
+        } plg.u.printMSG(sender, "msg_wrongeffect",cmd); //else return false;
         return true;
     }
     //                                                        
@@ -108,7 +109,8 @@ public class Cmd implements CommandExecutor{
             return executeCmd(sender, "set", arg1, arg2+" "+arg3);
         }else if(cmd.equalsIgnoreCase("wand")){
             return setWandMode(sender, arg1, arg2+" "+arg3);
-        } else return false;
+        } else plg.u.printMSG(sender, "msg_wrongeffect",cmd); //return false;
+        return true;
     }
 
     // play set <effect> time:10
@@ -161,10 +163,7 @@ public class Cmd implements CommandExecutor{
             plg.u.printMSG(sender, "msg_consoleneedcoord",cmd+" "+arg);
         }
         VisualEffect ve = getVisualEffect(cmd);
-        if (ve == null){
-            plg.u.printMSG(sender, "msg_wrongeffect",cmd);
-            return false;
-        }
+        if (ve == null) return false;
         params = processLocation(sender, params);
         Effects.playEffect(ve,  params);
         return true;
@@ -205,7 +204,7 @@ public class Cmd implements CommandExecutor{
             Effects.printAroundEffects((Player) sender, 8);
         } else if (cmd.equalsIgnoreCase("help")){
             plg.u.PrintHlpList(sender, 1, 15);
-        } else return false;
+        } else plg.u.printMSG(sender, "msg_wrongeffect",cmd);//return false;
         return true;
     }
 

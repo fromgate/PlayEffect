@@ -4,35 +4,43 @@ package me.fromgate.playeffect;
 import java.io.IOException;
 import java.util.Map;
 
+import me.fromgate.playeffect.customeffects.AdditionalEffects;
+import me.fromgate.playeffect.customeffects.PacketNMS;
+import me.fromgate.playeffect.customeffects.PacketProtocolLib;
 import me.fromgate.playeffect.effect.BasicEffect;
 
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlayEffect extends JavaPlugin {
-    boolean version_check = true;
-    boolean language_save = false;
+    boolean versionCheck = true;
+    boolean languageSave = false;
     String language = "english";
-    int effectpertick=500;
-    int queue_tick_interval=1;
-    int effect_visible_distance=32;
-    public boolean play_sound_smoke = true;
+    int effectsPerTick=500;
+    int queueTickInterval=1;
+    int effectVisibleDistance=32;
+    public boolean playSmokeForSound = true;
     String wand_item = "COAL";
-    boolean firework_rocket = false;
+    boolean useProtocolLib = true;
+    
+    
     public Util u;
     private Cmd cmd;
     public static PlayEffect  instance;
     
+    
 
     @Override
     public void onEnable() {
-        NMSLib.init();
         loadCfg();
         saveCfg();
-        u = new Util (this, language_save, language, "playeffect");
-        u.initUpdateChecker("PlayEffect", "66204", "a2a7b26dd4dc9bc496c80de4b49e87cb42e34ae3","playeffect", this.version_check);
+        u = new Util (this, languageSave, language, "playeffect");
+        u.initUpdateChecker("PlayEffect", "66204", "playeffect", this.versionCheck);
         instance = this;
-        EffectQueue.init(effectpertick,queue_tick_interval);
+    	if (useProtocolLib) PacketProtocolLib.init();
+    	if (PacketProtocolLib.isProtocolLibFound()) u.log("ProtocolLib found and connected."); 
+    	PacketNMS.init();
+        EffectQueue.init(effectsPerTick,queueTickInterval);
         cmd = new Cmd(this);
         getServer().getPluginManager().registerEvents(u, this);
         getCommand("playeffect").setExecutor(cmd);
@@ -53,27 +61,30 @@ public class PlayEffect extends JavaPlugin {
     }
 
     private void saveCfg(){
-        getConfig().set("general.check-updates",version_check);
+        getConfig().set("general.check-updates",versionCheck);
         getConfig().set("general.language",language);
-        getConfig().set("general.language-save",language_save);
+        getConfig().set("general.language-save",languageSave);
         getConfig().set("effects.wand-item",wand_item);
-        getConfig().set("effects.play-smoke-for-sound",play_sound_smoke);
-        getConfig().set("effects.queue.effects-per-tick",effectpertick);
-        getConfig().set("effects.queue.tick-interval",queue_tick_interval);
-        getConfig().set("effects.firework-play-rocket-sound",firework_rocket);
+        getConfig().set("effects.play-smoke-for-sound",playSmokeForSound);
+        getConfig().set("effects.queue.effects-per-tick",effectsPerTick);
+        getConfig().set("effects.queue.tick-interval",queueTickInterval);
+        getConfig().set("system.firework-play-method",AdditionalEffects.fireworkMethod);
+        getConfig().set("system.ProtcolLib-support",useProtocolLib);
+        
         saveConfig();
     }
 
     protected void loadCfg(){
         reloadConfig();
-        version_check = getConfig().getBoolean("general.check-updates",true);
+        versionCheck = getConfig().getBoolean("general.check-updates",true);
         language = getConfig().getString("general.language","english");
-        language_save= getConfig().getBoolean("general.language-save",false);
-        effectpertick = getConfig().getInt("effects.queue.effects-per-tick",100);
-        queue_tick_interval = getConfig().getInt("effects.queue.tick-interval",1);
-        play_sound_smoke = getConfig().getBoolean("effects.play-smoke-for-sound",false);
+        languageSave= getConfig().getBoolean("general.language-save",false);
+        effectsPerTick = getConfig().getInt("effects.queue.effects-per-tick",100);
+        queueTickInterval = getConfig().getInt("effects.queue.tick-interval",1);
+        playSmokeForSound = getConfig().getBoolean("effects.play-smoke-for-sound",false);
         wand_item=getConfig().getString("effects.wand-item","COAL");
-        firework_rocket=getConfig().getBoolean("effects.firework-play-rocket-sound",true);
+        AdditionalEffects.fireworkMethod = getConfig().getInt("system.firework-play-method",-1);
+        useProtocolLib = getConfig().getBoolean("system.ProtcolLib-support",true);
     }
 
 

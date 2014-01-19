@@ -23,7 +23,7 @@ public class EffectSound extends BasicEffect {
         }
         pitch = getParam("pitch",1f);
         volume = getParam("volume",1f);
-        playsmoke = getParam ("showsmoke",PlayEffect.instance.play_sound_smoke);
+        playsmoke = getParam ("showsmoke",PlayEffect.instance.playSmokeForSound);
     }
 
     @Override

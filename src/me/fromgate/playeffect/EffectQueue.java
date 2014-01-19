@@ -34,7 +34,7 @@ public class EffectQueue {
         if (loc==null) return false;
         if (!loc.getWorld().getChunkAt(loc.getBlockX()>>4, loc.getBlockZ()>>4).isLoaded()) return false;
         for (Player p : Bukkit.getOnlinePlayers())
-            if (loc.getWorld().equals(loc.getWorld())&&(loc.distance(p.getLocation())<=distance)) return true;
+            if (loc.getWorld().equals(p.getWorld())&&(loc.distance(p.getLocation())<=distance)) return true;
         return false;
     }
     

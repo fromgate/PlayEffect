@@ -1,9 +1,9 @@
 name: PlayEffect
 main: me.fromgate.playeffect.PlayEffect
-version: 0.3.1
+version: 0.3.2
 website: http://fromgate.me
 author: fromgate, fromgate@gmail.com
-softdepend: [WorldEdit,WorldGuard]
+softdepend: [WorldEdit,WorldGuard,ProtocolLib]
 commands:
    playeffect:
       aliases: [play,pef,pe]
