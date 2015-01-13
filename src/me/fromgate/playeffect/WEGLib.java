@@ -1,8 +1,29 @@
+/*  
+ *  PlayEffect, Minecraft bukkit plugin
+ *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  http://dev.bukkit.org/bukkit-plugins/playeffect/
+ *    
+ *  This file is part of PlayEffect.
+ *  
+ *  PlayEffect is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PlayEffect is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PlayEffect.  If not, see <http://www.gnorg/licenses/>.
+ * 
+ */
+
 package me.fromgate.playeffect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,14 +34,12 @@ import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldedit.regions.CuboidRegionSelector;
 import com.sk89q.worldedit.regions.RegionSelector;
+import com.sk89q.worldedit.regions.selector.CuboidRegionSelector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WEGLib {
-
-
     /*private static PlayEffect plg(){
         return PlayEffect.instance;
     }*/
@@ -78,7 +97,7 @@ public class WEGLib {
         World world = null;
         for (World w : Bukkit.getWorlds()){
             if (worldguard.getRegionManager(w).getRegions().containsKey(rg)){
-                prg = worldguard.getRegionManager(w).getRegionExact(rg);
+                prg = worldguard.getRegionManager(w).getRegion(rg);
                 world = w;
                 break;
             }
@@ -97,7 +116,7 @@ public class WEGLib {
         World world = null;
         for (World w : Bukkit.getWorlds()){
             if (worldguard.getRegionManager(w).getRegions().containsKey(rg)){
-                prg = worldguard.getRegionManager(w).getRegionExact(rg);
+                prg = worldguard.getRegionManager(w).getRegion(rg);
                 world = w;
                 break;
             }
@@ -123,6 +142,7 @@ public class WEGLib {
         Selection sel = worldedit.getSelection(p);
         if (sel == null) return locs;
         RegionSelector rs = worldedit.getSelection(p).getRegionSelector();
+        
         if (rs.isDefined()){
             if (!(rs instanceof CuboidRegionSelector)) return locs;
             CuboidRegionSelector crs = (CuboidRegionSelector) rs;

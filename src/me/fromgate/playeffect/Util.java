@@ -4,12 +4,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,19 +22,26 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class Util extends FGUtilCore implements Listener {
     PlayEffect plg;
     
-    private static PlayEffect plg(){
-        return PlayEffect.instance;
-    }
-
     public Util(PlayEffect plugin, boolean savelng, String language, String plgcmd){
         super (plugin, savelng, language, plgcmd,"playeffect");
         this.plg = plugin;
+        initMessages();
         InitCmd();
         if (savelng) this.SaveMSG();
     }
-
-
+    
     @Override
+    public boolean checkCmdPerm (CommandSender sender, String command){
+        String cmd = command;
+        VisualEffect ve = VisualEffect.getEffectByName(command);
+        if (ve !=null) cmd = ve.name();
+    	if (!cmds.containsKey(cmd.toLowerCase())) return false;
+        Cmd cm = cmds.get(cmd.toLowerCase());
+        if (sender instanceof Player) return (cm.perm.isEmpty()||sender.hasPermission(cm.perm));
+        else return cm.console;
+    }
+    
+
     public void initMessages(){
         addMSG("lst_title", "String list:");
         addMSG("lst_footer", "Page: [%1% / %2%]");
@@ -45,52 +52,77 @@ public class Util extends FGUtilCore implements Listener {
         addMSG("cfgmsg_general_language-save", "Save translation file: %1%");
         addMSG("hlp_list", "%1% - list of placed effects");
         addMSG("hlp_set", "%1% - setup effect");
-        addMSG("hlp_smoke", "%1% - play Smoke effect");
-        addMSG("hlp_signal", "%1% - play Ender Signal effect");
+        
         addMSG("hlp_potion", "%1% - play Potion break effect");
-        addMSG("hlp_flame", "%1% - play Flame effect");
-        addMSG("hlp_explosion", "%1% - play Explosion effect");
-        addMSG("hlp_eye", "%1% - play Ender eye effect");
-        addMSG("hlp_lightning", "%1% - play Lightning effect");
-        addMSG("hlp_note", "%1% - play Note effect");
+        
+        addMSG("hlp_ender_signal", "%1% - play Ender Signal effect");
+        addMSG("hlp_ender_eye", "%1% - play Ender eye effect");
         addMSG("hlp_portal", "%1% - play Portal effect");
-        addMSG("hlp_cloud", "%1% - play Smoke effect");
-        addMSG("hlp_hugeexplosion", "%1% - play Huge explosion effect");
-        addMSG("hlp_largeexplode", "%1% - play Large explode effect");
-        addMSG("hlp_spark", "%1% - play Spark effect");
-        addMSG("hlp_bubble", "%1% - play Bubble effect (works only underwater)");
-        addMSG("hlp_suspend", "%1% - play Suspend effect (works only underwater)");
-        addMSG("hlp_depthsuspend", "%1% - play Depth suspend effect (I don''know what is it)");
-        addMSG("hlp_townaura", "%1% - play Town aura effect");
+        
+        addMSG("hlp_lightning", "%1% - play Lightning effect");
+        
+        addMSG("hlp_explosion", "%1% - play Explosion effect");
+        addMSG("hlp_explosion_normal", "%1% - play explode effect");
+        addMSG("hlp_explosion_huge", "%1% - play Huge explosion effect");
+        addMSG("hlp_explosion_large", "%1% - play Large explode effect");
+
+        addMSG("hlp_fireworks_explode", "%1% - play Fireworks explosion effect");
+        addMSG("hlp_fireworks_spark", "%1% - play Fireworks spark effect");
+        
+        addMSG("hlp_water_bubble", "%1% - play Water bubble effect (works only underwater)");
+        addMSG("hlp_water_splash", "%1% - play Water splash effect");
+        addMSG("hlp_water_wake", "%1% - play Water wake effect");
+        addMSG("hlp_water_drop", "%1% - play Water drop effect");
+        
+        addMSG("hlp_suspended", "%1% - play Suspend effect (works only underwater)");
+        addMSG("hlp_suspended_depth", "%1% - play Depth suspend effect");
+
         addMSG("hlp_crit", "%1% - play Crit effect");
-        addMSG("hlp_magiccrit", "%1% - play Magic crit effect");
-        addMSG("hlp_mobspell", "%1% - play Mob spell effect");
-        addMSG("hlp_mobspellambient", "%1% - play Mob spell (ambient) effect");
+        addMSG("hlp_crit_magic", "%1% - play Magic crit effect");
+
+        
+        addMSG("hlp_smoke", "%1% - play Smoke effect (you can define direction)");
+        addMSG("hlp_smoke_normal", "%1% - play Normal smoke effect");
+        addMSG("hlp_smoke_large", "%1% - play Large smoke effect");
+        
+        
         addMSG("hlp_spell", "%1% - play Spell effect");
-        addMSG("hlp_instantspell", "%1% - play Instant spell effect");
-        addMSG("hlp_witchmagic", "%1% - play Witch magic effect");
-        addMSG("hlp_runes", "%1% - play Runes (magic book) effect");
-        addMSG("hlp_explode", "%1% - play explode effect");
-        addMSG("hlp_flamenew", "%1% - play Flame (new) effect");
+        addMSG("hlp_spell_instant", "%1% - play Instant spell effect");
+        addMSG("hlp_spell_mob", "%1% - play Mob spell effect");
+        addMSG("hlp_spell_mob_ambient", "%1% - play Mob spell (ambient) effect");
+        addMSG("hlp_spell_witch", "%1% - play Witch magic effect");
+
+        addMSG("hlp_drip_water", "%1% - play Drip water effect");
+        addMSG("hlp_drip_lava", "%1% - play Drip lava effect");
+        
+        addMSG("hlp_villager_angry", "%1% - play Angry villager effect");
+        addMSG("hlp_villager_happy", "%1% - play Happy villager effect");
+        
+        addMSG("hlp_flame", "%1% - play Flame (new) effect");
+        addMSG("hlp_flame_spawner", "%1% - play Flame effect");
+        
+        addMSG("hlp_item_crack", "%1% - play Icon crack effect");
+        addMSG("hlp_block_crack", "%1% - play Block crack effect");
+        addMSG("hlp_block_crack_sound", "%1% - play Block crack effect with break sound");
+        addMSG("hlp_block_dust", "%1% - play Block dust effect");
+        
+        addMSG("hlp_town_aura", "%1% - play Town aura effect");
+        
+        addMSG("hlp_note", "%1% - play Note effect");
+        addMSG("hlp_enchantment_table", "%1% - play Runes (magic book) effect");
         addMSG("hlp_lava", "%1% - play Lava effect");
         addMSG("hlp_footstep", "%1% - play Footstep effect");
-        addMSG("hlp_splash", "%1% - play Splash effect");
-        addMSG("hlp_largesmoke", "%1% - play Large smoke effect");
-        addMSG("hlp_reddust", "%1% - play Reddust effect");
+        addMSG("hlp_cloud", "%1% - play Smoke effect");
+        addMSG("hlp_redstone", "%1% - play Redstone dust effect");
         addMSG("hlp_snowball", "%1% - play Snowball effect");
-        addMSG("hlp_dripwater", "%1% - play Drip water effect");
-        addMSG("hlp_driplava", "%1% - play Drip lava effect");
-        addMSG("hlp_snowshovel", "%1% - play Snow showel effect");
+        addMSG("hlp_snow_shovel", "%1% - play Snow showel effect");
         addMSG("hlp_slime", "%1% - play Slime effect");
         addMSG("hlp_heart", "%1% - play Heart effect");
-        addMSG("hlp_angry", "%1% - play Angry villager effect");
-        addMSG("hlp_happy", "%1% - play Happy villager effect");
-        addMSG("hlp_tilecrack", "%1% - play Tile crack effect");
-        addMSG("hlp_blockcrack", "%1% - play Block crack effect");
-        addMSG("hlp_blockcracksound", "%1% - play Block crack effect with break sound");
-        addMSG("hlp_blockdust", "%1% - play Block dust effect");
-        addMSG("hlp_iconcrack", "%1% - play Icon crack effect");
-        addMSG("hlp_firework", "%1% - play Firework effect");
+        addMSG("hlp_barrier", "%1% - play Barrier effect");
+        
+        addMSG("hlp_item_take", "%1% - play Item take effect (I don''know what is it)");
+        addMSG("hlp_mob_appearance", "%1% - play Mob appearance effect");
+        
         addMSG("hlp_sound", "%1% - play Sound effect");
         addMSG("hlp_song", "%1% - play Song effect");
         addMSG("msg_effectset", "Effect was succesfully set");
@@ -99,7 +131,7 @@ public class Util extends FGUtilCore implements Listener {
         addMSG("hlp_remove", "%1% - remove static effect");
         addMSG("hlp_wand", "%1% - to enable/disable wand mode");
         addMSG("msg_wandenabled", "Wand mode enabled");
-        addMSG("msg_seteffect", "Effect set %1% (%2%)");
+        addMSG("msg_seteffect", "Effect set %1%");
         addMSG("msg_removed", "Effect %1% removed");
         addMSG("msg_efflist", "Effect list");
         addMSG("msg_efflistempty", "Effect list is empty");
@@ -175,29 +207,13 @@ public class Util extends FGUtilCore implements Listener {
         loc.getBlockZ();
     }
 
-    public static Color colorByName(String colorname, Color defcolor){
-        if (colorname.equalsIgnoreCase("random")) return Color.fromRGB(plg().u.random.nextInt(255), plg().u.random.nextInt(255), plg().u.random.nextInt(255));
-        Color [] clr = {Color.WHITE, Color.SILVER, Color.GRAY, Color.BLACK, 
-                Color.RED, Color.MAROON, Color.YELLOW, Color.OLIVE,
-                Color.LIME, Color.GREEN, Color.AQUA, Color.TEAL,
-                Color.BLUE,Color.NAVY,Color.FUCHSIA,Color.PURPLE};
-        String [] clrs = {"WHITE","SILVER", "GRAY", "BLACK", 
-                "RED", "MAROON", "YELLOW", "OLIVE",
-                "LIME", "GREEN", "AQUA", "TEAL",
-                "BLUE","NAVY","FUCHSIA","PURPLE"};
-        for (int i = 0; i<clrs.length;i++)
-            if (colorname.equalsIgnoreCase(clrs[i])) return clr[i];
-
-        if (colorname.contains(",")){
-            String [] ln = colorname.split(",");
-            if ((ln.length==3)&&plg().u.isInteger(ln[0],ln[1],ln[2]))
-                return Color.fromRGB(Integer.parseInt(ln[0]), Integer.parseInt(ln[1]), Integer.parseInt(ln[2]));
-        }
-        return defcolor;
-    }
-
     public static List<Location> buildCircle (Location loc, int radius){
         List<Location> circle = new ArrayList<Location>();
+        if (loc == null) return circle;
+        if (radius<1) {
+        	circle.add(loc.getBlock().getLocation());
+        	return circle;
+        }
         World w = loc.getWorld();
         int x = 0;
         int z = radius;
@@ -231,6 +247,10 @@ public class Util extends FGUtilCore implements Listener {
         List<Location> plain = new ArrayList<Location>();
         if (loc1 == null) return plain;
         if (loc2 == null) return plain;
+        if (loc1.getBlock().equals(loc2.getBlock())) {
+        	plain.add(loc1.getBlock().getLocation());
+        	return plain;
+        }
         for (int x = Math.min(loc1.getBlockX(), loc2.getBlockX()); x<=Math.max(loc1.getBlockX(), loc2.getBlockX());x++)
             for (int z = Math.min(loc1.getBlockZ(), loc2.getBlockZ()); z<=Math.max(loc1.getBlockZ(), loc2.getBlockZ());z++)
                 plain.add(new Location (loc1.getWorld(), x, loc1.getBlockY(), z));
@@ -241,7 +261,10 @@ public class Util extends FGUtilCore implements Listener {
         List<Location> cube = new ArrayList<Location>();
         if (loc1 == null) return cube;
         if (loc2 == null) return cube;
-
+        if (loc1.getBlock().equals(loc2.getBlock())) {
+        	cube.add(loc1.getBlock().getLocation());
+        	return cube;
+        }
         for (int x = Math.min(loc1.getBlockX(), loc2.getBlockX()); x<=Math.max(loc1.getBlockX(), loc2.getBlockX());x++)
             for (int z = Math.min(loc1.getBlockZ(), loc2.getBlockZ()); z<=Math.max(loc1.getBlockZ(), loc2.getBlockZ());z++)
                 for (int y = Math.min(loc1.getBlockY(), loc2.getBlockY()); y<=Math.max(loc1.getBlockY(), loc2.getBlockY());y++){
@@ -255,6 +278,12 @@ public class Util extends FGUtilCore implements Listener {
 
     public static List<Location> buildLine (Location loc1, Location loc2){
         List<Location> line = new ArrayList<Location>();
+        if (loc1==null) return line;
+        if (loc2==null) return line;
+        if (loc1.getBlock().equals(loc2.getBlock())) {
+        	line.add(loc1.getBlock().getLocation());
+        	return line;
+        }
         int dx = Math.max(loc1.getBlockX(), loc2.getBlockX())-Math.min(loc1.getBlockX(), loc2.getBlockX());
         int dy = Math.max(loc1.getBlockY(), loc2.getBlockY())-Math.min(loc1.getBlockY(), loc2.getBlockY());
         int dz = Math.max(loc1.getBlockZ(), loc2.getBlockZ())-Math.min(loc1.getBlockZ(), loc2.getBlockZ());
@@ -350,10 +379,6 @@ public class Util extends FGUtilCore implements Listener {
         } while (i<=j);
         return locs;
     }
-
-    /*public static Long timeToTicks(Long time){
-        return Math.max(1, (time/50));
-    }*/
 
 
     @EventHandler(priority=EventPriority.NORMAL)

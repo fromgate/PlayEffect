@@ -1,11 +1,11 @@
 /*  
- *  FGUtilCore, Utilities class for Minecraft bukkit plugins
+ *  FGUtilCore
+ *  (c)2012-2014, fromgate, fromgate@gmail.com
+ *    
+ *  This file is part of FGUtilCore.
  *  
- *    (c)2012-2013, fromgate, fromgate@gmail.com
- *  
- *      
  *  FGUtilCore is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -15,9 +15,10 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with WeatherMan.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with ReActions.  If not, see <http://www.gnorg/licenses/>.
  * 
  */
+
 
 package me.fromgate.playeffect;
 
@@ -101,7 +102,7 @@ public abstract class FGUtilCore {
         this.des = plg.getDescription();
         this.language = lng;
         this.InitMsgFile();
-        this.initAllMessages();
+        this.initStdMsg();
         this.fillLoadedMessages();
         this.savelng = savelng;
         this.plgcmd = plgcmd;
@@ -178,8 +179,7 @@ public abstract class FGUtilCore {
                 //String plugin_jar_url = (String) latest.get("downloadUrl");
                 //this.project_file_url = plugin_jar_url.replace("http://servermods.cursecdn.com/", "http://dev.bukkit.org/media/");
             }
-        } catch (Throwable e) {
-        	this.project_check_version=false;
+        } catch (Exception e) {
             this.log("Failed to check last version");
         }
     }
@@ -201,9 +201,7 @@ public abstract class FGUtilCore {
     /* 
      * Инициализация стандартных сообщений
      */
-    public abstract void initMessages();
-    
-    private void initAllMessages(){
+    private void initStdMsg(){
         addMSG ("msg_outdated", "%1% is outdated!");
         addMSG ("msg_pleasedownload", "Please download new version (%1%) from ");
         addMSG ("hlp_help", "Help");
@@ -228,7 +226,6 @@ public abstract class FGUtilCore {
         addMSG ("cfgmsg_general_check-updates", "Check updates: %1%");
         addMSG ("cfgmsg_general_language", "Language: %1%");
         addMSG ("cfgmsg_general_language-save", "Save translation file: %1%");
-        initMessages();
     }
 
 
@@ -472,7 +469,13 @@ public abstract class FGUtilCore {
                 String ti[] = si[0].split(":");
                 if (ti.length>0){
                     if (ti[0].matches("[0-9]*")) id=Integer.parseInt(ti[0]);
-                    else id=Material.getMaterial(ti[0]).getId();						
+                    else {
+                    	try {
+                    		id=Material.getMaterial(ti[0]).getId();
+                    	} catch (Exception e){
+                    		logOnce("unknownitem"+ti[0],"Unknown item: "+ti[0]);
+                    	}
+                    }
                     if ((ti.length==2)&&(ti[1]).matches("[0-9]*")) data = Integer.parseInt(ti[1]);
                     return ((item_id==id)&&((data<0)||(item_data==data))&&(item_amount>=amount));
                 }
@@ -665,7 +668,7 @@ public abstract class FGUtilCore {
      */
     public void BC (String msg){
         plg.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', px+msg));
-    }
+    } 
 
     public void broadcastMSG(String perm, Object... s){
         for (Player p : Bukkit.getOnlinePlayers())
@@ -810,17 +813,8 @@ public abstract class FGUtilCore {
     public void printMSG (CommandSender p, Object... s){
         String message = getMSG (s); 
         if ((!(p instanceof Player))&&(!colorconsole)) message = ChatColor.stripColor(message);
-        /*
-        if (message.length()>=2){
-            String lastTwoChars = message.substring(message.length()-2);
-            if (!message.equals(ChatColor.stripColor(lastTwoChars))) message = message.substring(0, message.length()-2);
-        }*/
         p.sendMessage(message);
     }
-
-
-
-
 
     /* 
      * Печать справки
@@ -1132,7 +1126,6 @@ public abstract class FGUtilCore {
         int max = 0;
         String strmin = minmaxstr;
         String strmax = minmaxstr;
-
         if (minmaxstr.contains("-")){
             strmin = minmaxstr.substring(0,minmaxstr.indexOf("-"));
             strmax = minmaxstr.substring(minmaxstr.indexOf("-")+1);
@@ -1166,23 +1159,18 @@ public abstract class FGUtilCore {
             if (isInteger(ln[0])) hh = Integer.parseInt(ln[0]);
             if (isInteger(ln[1])) mm = Integer.parseInt(ln[1]);
             if (isInteger(ln[2])) ss = Integer.parseInt(ln[2]);
-        } else if (time.endsWith("ms")) {
-            String s = time.replace("ms", "");
-            if (isInteger(s)) ms = Integer.parseInt(s);
-        } else if (time.endsWith("h")) {
-            String s = time.replace("h", "");
-            if (isInteger(s)) hh = Integer.parseInt(s);
-        } else if (time.endsWith("m")) {
-            String s = time.replace("m", "");
-            if (isInteger(s)) mm = Integer.parseInt(s);
-        } else if (time.endsWith("s")) {
-            String s = time.replace("s", "");
-            if (isInteger(s)) ss = Integer.parseInt(s);
-        } else if (time.endsWith("t")) {
-            String s = time.replace("t", "");
-            if (isInteger(s)) tt = Integer.parseInt(s);
+        } else if (time.matches("^\\d+ms")) {
+        	ms = Integer.parseInt(time.replace("ms", ""));
+        } else if (time.matches("^\\d+h")) {
+        	hh = Integer.parseInt(time.replace("h", ""));
+        } else if (time.matches("^\\d+m$")) {
+        	mm = Integer.parseInt(time.replace("m", ""));
+        } else if (time.matches("^\\d+s$")) {
+        	ss = Integer.parseInt(time.replace("s", ""));
+        } else if (time.matches("^\\d+t$")) {
+        	tt = Integer.parseInt(time.replace("t", ""));
         }
-        return (long) ((hh*3600000)+(mm*60000)+(ss*1000)+(tt*50)+ms);
+        return (hh*3600000L)+(mm*60000L)+(ss*1000L)+(tt*50L)+ms;
     }
 
     public String itemToString (ItemStack item){
@@ -1199,6 +1187,10 @@ public abstract class FGUtilCore {
         return (int) l;
     }
 
+    public boolean returnMSG (boolean result, CommandSender p, Object... s){
+    	if (p!=null) this.printMSG(p, s);
+    	return result;
+    }
 
 
 }

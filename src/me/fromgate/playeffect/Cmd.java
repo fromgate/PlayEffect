@@ -1,10 +1,32 @@
+/*  
+ *  PlayEffect, Minecraft bukkit plugin
+ *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  http://dev.bukkit.org/bukkit-plugins/playeffect/
+ *    
+ *  This file is part of PlayEffect.
+ *  
+ *  PlayEffect is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PlayEffect is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PlayEffect.  If not, see <http://www.gnorg/licenses/>.
+ * 
+ */
+
+
 package me.fromgate.playeffect;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.fromgate.playeffect.effect.BasicEffect;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -74,7 +96,6 @@ public class Cmd implements CommandExecutor{
             if (plg.u.isIntegerGZ(arg)) radius = Integer.parseInt(arg);
             Effects.printAroundEffects((Player) sender, radius);
         } else plg.u.printMSG(sender, "msg_wrongeffect",cmd);//return false;
-        //plg.u.printMSG(sender, "msg_wrongeffect",cmd);
         return true;
     }
 
@@ -82,7 +103,7 @@ public class Cmd implements CommandExecutor{
         if (playEffect(sender,cmd,arg1+" "+arg2)) return true;
         else if(cmd.equalsIgnoreCase("set")){
             if (VisualEffect.contains(arg1)){
-                arg2 = processLocation(sender, arg2);
+            	arg2 = processLocation(sender, arg2);
                 if (setEffect (sender,arg1,arg2)) plg.u.printMSG(sender, "msg_effectset",arg1);
                 else plg.u.printMSG(sender, "msg_effectnotset",arg1);
             } else plg.u.printMSG(sender, "msg_unknowneffect",arg1);
@@ -115,9 +136,8 @@ public class Cmd implements CommandExecutor{
 
     // play set <effect> time:10
     private boolean setEffect(CommandSender sender, String effect, String param) {
-        if (!VisualEffect.contains(effect)) return false;
-        VisualEffect ve = VisualEffect.valueOf(effect.toUpperCase());
-        if (ve == VisualEffect.BASIC) return false;
+        VisualEffect ve = VisualEffect.getEffectByName(effect);
+        if (ve == null) return false;
         Map<String,String> params = Effects.parseParams(param);
         String id = Effects.getId(Effects.getParam(params, "id", ""));
         String time = Effects.getParam(params, "time", Long.toString(ve.getRepeatTicks())+"t"); 
@@ -125,8 +145,6 @@ public class Cmd implements CommandExecutor{
         Effects.createStaticEffect(be, id,time, true);
         return true;
     }
-
-
 
     // play set <effect> time:10
     private boolean setWandMode (CommandSender sender, String effect, String param) {
@@ -138,22 +156,7 @@ public class Cmd implements CommandExecutor{
         return true;
     }
 
-
-
-    private VisualEffect getVisualEffect (String effname){
-        if (!VisualEffect.contains(effname)) return null; 
-        VisualEffect ve = null;
-        try{
-            ve = VisualEffect.valueOf(effname.toUpperCase());
-        } catch (Exception e){
-            return null;
-        }
-        if (ve == null) return null;
-        if (ve == VisualEffect.BASIC) return null;
-        return ve;        
-    }
-
-    private boolean playEffect(CommandSender sender, String cmd, String arg) {
+	private boolean playEffect(CommandSender sender, String cmd, String arg) {
         Map<String,String> params = Effects.parseParams(arg);
         Player player = null;
         String paramPlayer = Effects.getParam(params, "player", "");
@@ -162,7 +165,7 @@ public class Cmd implements CommandExecutor{
         if ((player==null)&(!arg.contains("loc:"))) {
             plg.u.printMSG(sender, "msg_consoleneedcoord",cmd+" "+arg);
         }
-        VisualEffect ve = getVisualEffect(cmd);
+        VisualEffect ve = VisualEffect.getEffectByName(cmd);
         if (ve == null) return false;
         params = processLocation(sender, params);
         Effects.playEffect(ve,  params);
@@ -188,13 +191,11 @@ public class Cmd implements CommandExecutor{
         }else if (cmd.equalsIgnoreCase("restart")){
             Effects.stopAllEffects();
             EffectQueue.clearQueue();
-            //Effects.clearOverduedTTL();
             Effects.startAllEffects();
             plg.u.printMSG(sender, "msg_restarted");
         }else if (cmd.equalsIgnoreCase("reload")){
             Effects.stopAllEffects();
             EffectQueue.clearQueue();
-            //Effects.clearOverduedTTL();
             plg.loadCfg();
             Effects.reloadEffects();
             Effects.startAllEffects();
@@ -246,7 +247,6 @@ public class Cmd implements CommandExecutor{
         Map<String,String> newparams = new HashMap<String,String>();
         if (!params.containsKey("loc")) params.put("loc", "view");
         if (!params.containsKey("loc2")) params.put("loc2", "eye");
-
         
         if ((sender instanceof Player)) {
             Player p = (Player)sender;
@@ -268,8 +268,6 @@ public class Cmd implements CommandExecutor{
                 }
                 newparams.put(key, value);
             }
-            
-            
             return newparams;
         }
         return params;

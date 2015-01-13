@@ -1,14 +1,33 @@
+/*  
+ *  PlayEffect, Minecraft bukkit plugin
+ *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  http://dev.bukkit.org/bukkit-plugins/playeffect/
+ *    
+ *  This file is part of PlayEffect.
+ *  
+ *  PlayEffect is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PlayEffect is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PlayEffect.  If not, see <http://www.gnorg/licenses/>.
+ * 
+ */
+
 package me.fromgate.playeffect;
 
 
 import java.io.IOException;
 import java.util.Map;
-
 import me.fromgate.playeffect.customeffects.AdditionalEffects;
 import me.fromgate.playeffect.customeffects.PacketNMS;
-import me.fromgate.playeffect.customeffects.PacketProtocolLib;
 import me.fromgate.playeffect.effect.BasicEffect;
-
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,14 +56,14 @@ public class PlayEffect extends JavaPlugin {
         u = new Util (this, languageSave, language, "playeffect");
         u.initUpdateChecker("PlayEffect", "66204", "playeffect", this.versionCheck);
         instance = this;
-    	if (useProtocolLib) PacketProtocolLib.init();
-    	if (PacketProtocolLib.isProtocolLibFound()) u.log("ProtocolLib found and connected."); 
+        // ProtocolLib is temporary disabled. Waiting for new particles support :)
+    	//if (useProtocolLib) PacketProtocolLib.init();
+    	//if (PacketProtocolLib.isProtocolLibFound()) u.log("ProtocolLib found and connected."); 
     	PacketNMS.init();
         EffectQueue.init(effectsPerTick,queueTickInterval);
         cmd = new Cmd(this);
         getServer().getPluginManager().registerEvents(u, this);
         getCommand("playeffect").setExecutor(cmd);
-
         Effects.loadEffects();
         ImportNoSmoking.loadSmokePoints(); //импорт старья
         WEGLib.init();

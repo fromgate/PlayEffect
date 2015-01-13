@@ -1,6 +1,29 @@
+/*  
+ *  PlayEffect, Minecraft bukkit plugin
+ *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  http://dev.bukkit.org/bukkit-plugins/playeffect/
+ *    
+ *  This file is part of PlayEffect.
+ *  
+ *  PlayEffect is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PlayEffect is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PlayEffect.  If not, see <http://www.gnorg/licenses/>.
+ * 
+ */
+
 package me.fromgate.playeffect.customeffects;
 
 import me.fromgate.playeffect.PlayEffect;
+import me.fromgate.playeffect.VisualEffect;
 
 import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
@@ -16,13 +39,18 @@ public class AdditionalEffects {
 	
 
 	public static void sendExplosionPacket(Location loc, float size){
-		if (PacketProtocolLib.isProtocolLibFound()) PacketProtocolLib.sendExplosionPacket(loc, size);
-		else PacketNMS.sendExplosionPacket(loc, size);
+		PacketNMS.sendExplosionPacket(loc, size);
+		/* if (PacketProtocolLib.isProtocolLibFound()) PacketProtocolLib.sendExplosionPacket(loc, size);
+		else PacketNMS.sendExplosionPacket(loc, size); */
 	}
 
-	public static void sendParticlesPacket(Location loc, String effectname, float xOffset, float yOffset, float zOffset, float effectSpeed, int amount){
-		if (PacketProtocolLib.isProtocolLibFound()) PacketProtocolLib.sendParticlesPacket(loc, effectname, xOffset, yOffset, zOffset, effectSpeed, amount);
-		else PacketNMS.sendParticlesPacket(loc, effectname, xOffset, yOffset, zOffset, effectSpeed, amount);
+	//sendParticlesPacket(VisualEffect effect, Location loc, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius)
+	public static void sendParticlesPacket(Location loc, String effectname, int id, int data, float xOffset, float yOffset, float zOffset, float effectSpeed, int amount){
+		VisualEffect ve = VisualEffect.getEffectByName(effectname);
+		if (ve == null) return;
+		PacketNMS.sendParticlesPacket(ve, loc, id, data, xOffset, yOffset, zOffset, effectSpeed, amount);
+		/*if (PacketProtocolLib.isProtocolLibFound()) PacketProtocolLib.sendParticlesPacket(loc, effectname, xOffset, yOffset, zOffset, effectSpeed, amount);
+		else PacketNMS.sendParticlesPacket(loc, effectname, xOffset, yOffset, zOffset, effectSpeed, amount); */
 	}
 	
 	
@@ -68,8 +96,8 @@ public class AdditionalEffects {
 		PlayEffect.instance.u.log("Determined firework method: "+method+ " ["+fireworkMethodNames[method]+"]");
 		return method;
 	}
-
 	
+	// Old. Not working in 1.8.1
 	public static void playFirework172 (Location loc, FireworkEffect fe){
 		if (isBukkitOld()) return;
 		Firework fw = (Firework) loc.getWorld().spawn(loc, Firework.class);

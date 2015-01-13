@@ -1,15 +1,35 @@
+/*  
+ *  PlayEffect, Minecraft bukkit plugin
+ *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  http://dev.bukkit.org/bukkit-plugins/playeffect/
+ *    
+ *  This file is part of PlayEffect.
+ *  
+ *  PlayEffect is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PlayEffect is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PlayEffect.  If not, see <http://www.gnorg/licenses/>.
+ * 
+ */
+
 package me.fromgate.playeffect.effect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitTask;
-
 import me.fromgate.playeffect.DrawType;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.Util;
@@ -18,9 +38,6 @@ import me.fromgate.playeffect.VisualEffect;
 
 public abstract class BasicEffect {
     VisualEffect type =VisualEffect.BASIC;
-    DrawType drawtype = DrawType.NORMAL;
-    private Location loc;
-    private Location loc2;
     private Long dur = 0L;
     private Long ttl = 0L;
     private Long freq = 0L;
@@ -31,14 +48,18 @@ public abstract class BasicEffect {
     private int chance=100;
     private boolean land = false; // land:true
     private List<Location> cache  = new ArrayList<Location>();
+    DrawType drawtype = DrawType.NORMAL;
+    private Location loc;
+    private Location loc2;
 
     Util u(){
         return PlayEffect.instance.u;
     }
     
-    public void initEffect(VisualEffect effecttype, Location loc, Map<String,String> params){
-        this.type = effecttype;
+    public void initEffect(VisualEffect visualEffect, Location loc, Map<String,String> params){
+        this.type = visualEffect;
         this.params = params;
+        replaceParamIfExists("effectname",type.name());
         this.loc = loc;
         this.land = getParam("land",false);
         dur =  u().parseTime(getParam("dur", "0"));
@@ -214,9 +235,17 @@ public abstract class BasicEffect {
         return "";
     }
 
+    public boolean isParamExist(String key){
+    	return params.containsKey(key);
+    }
+    
     public boolean getParam(String key, boolean defparam){
         if (params.containsKey(key)) return params.get(key).equalsIgnoreCase("true"); 
         return defparam; 
+    }
+    
+    public void replaceParamIfExists (String key, String newValue){
+    	if (params.containsKey(key)) params.put(key, newValue);
     }
 
     public long getRepeatTick(){

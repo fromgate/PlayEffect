@@ -1,3 +1,25 @@
+/*  
+ *  PlayEffect, Minecraft bukkit plugin
+ *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  http://dev.bukkit.org/bukkit-plugins/playeffect/
+ *    
+ *  This file is part of PlayEffect.
+ *  
+ *  PlayEffect is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PlayEffect is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PlayEffect.  If not, see <http://www.gnorg/licenses/>.
+ * 
+ */
+
 package me.fromgate.playeffect.customeffects;
 
 import org.bukkit.Bukkit;
@@ -42,6 +64,7 @@ public class PacketProtocolLib {
 	public static void sendParticlesPacket(Location loc, String effectName, float xOffset, float yOffset, float zOffset, float effectSpeed, int amount){
 		if (!connected) return;
 		PacketContainer particles = protocolManager.createPacket(PacketType.Play.Server.WORLD_PARTICLES);
+		
 		particles.getStrings().write(0, effectName);
 		particles.getFloat().write(0, (float) loc.getX());
 		particles.getFloat().write(1, (float) loc.getY());
@@ -68,6 +91,18 @@ public class PacketProtocolLib {
 		entityEffect.getBytes().write(0, (byte) 17);
 		protocolManager.broadcastServerPacket(entityEffect, loc, 64);
 		fw.remove();
-	} 
+	}
+	
+	public static void sendFallPacket(Location loc, float distance){
+		if (!connected) return;
+		PacketContainer fallEffectPacket = protocolManager.createPacket(PacketType.Play.Server.WORLD_EVENT);
+		fallEffectPacket.getIntegers().write(0, 2006);
+		fallEffectPacket.getIntegers().write(1, loc.getBlockX());
+		fallEffectPacket.getIntegers().write(2, loc.getBlockY());
+		fallEffectPacket.getIntegers().write(3, loc.getBlockZ());
+		fallEffectPacket.getFloat().write(0, distance);
+		fallEffectPacket.getBooleans().write(0, false);
+		protocolManager.broadcastServerPacket(fallEffectPacket, loc, 48);
+	}
 
 }

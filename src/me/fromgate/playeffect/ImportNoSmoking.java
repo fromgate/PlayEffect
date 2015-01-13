@@ -1,18 +1,36 @@
+/*  
+ *  PlayEffect, Minecraft bukkit plugin
+ *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  http://dev.bukkit.org/bukkit-plugins/playeffect/
+ *    
+ *  This file is part of PlayEffect.
+ *  
+ *  PlayEffect is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PlayEffect is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with PlayEffect.  If not, see <http://www.gnorg/licenses/>.
+ * 
+ */
+
 package me.fromgate.playeffect;
 
 import java.io.File;
-
 import me.fromgate.playeffect.effect.BasicEffect;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ImportNoSmoking {
-
     private static PlayEffect plg(){
         return PlayEffect.instance;
     }
     // Import NoSmoking! v0.0.7 smoke (effect) points
-
     public static void loadSmokePoints(){
         int count = 0;
         try{
@@ -40,9 +58,7 @@ public class ImportNoSmoking {
         } catch (Exception e){
             e.printStackTrace();
         }
-       
        if (count>0) plg().u.log("Imported "+count+" effects from NoSmoking! configuration file (smokepoints.yml)");
-
     }
 
     private static String importSmokeParam (VisualEffect ve, int param){
@@ -52,7 +68,7 @@ public class ImportNoSmoking {
         case SOUND: return "type:"+importSound(param);
         case SONG: return "disc:"+importSong(param);
         case LIGHTNING: return "lchance:"+importLightChance(param)+" mode:"+importLightMode(param);
-        case LARGEEXPLODE: return "num:5 offset:0.8 speed:3";
+        case EXPLOSION_LARGE: return "num:5 offset:0.8 speed:3";
         default: return "";
         }
     }
@@ -80,14 +96,14 @@ public class ImportNoSmoking {
         switch (smoke){
         case 0: return VisualEffect.SMOKE;
         case 1: return VisualEffect.FLAME;
-        case 2: return VisualEffect.SIGNAL;
+        case 2: return VisualEffect.ENDER_SIGNAL;
         case 3: return VisualEffect.POTION;
         case 4: return VisualEffect.PORTAL;
-        case 5: return VisualEffect.EYE;
+        case 5: return VisualEffect.ENDER_EYE;
         case 6: return VisualEffect.SONG; //ммммм.... мммммм....
         case 7: return VisualEffect.SOUND;
         case 8: return VisualEffect.LIGHTNING;
-        case 9: return VisualEffect.LARGEEXPLODE;
+        case 9: return VisualEffect.EXPLOSION_LARGE;
         }
         return null;
     }
@@ -108,8 +124,6 @@ public class ImportNoSmoking {
         }
         return "up";
     }
-
-
 
     private static String importSound(int param) {
         switch (param){
@@ -145,6 +159,4 @@ public class ImportNoSmoking {
         }
         return "anytime";
     }
-
-
 }

@@ -1,9 +1,9 @@
 package me.fromgate.playeffect.effect;
 
+import me.fromgate.playeffect.EffectColor;
 import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.customeffects.AdditionalEffects;
-
+import me.fromgate.playeffect.customeffects.InstantFireworks;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -26,19 +26,20 @@ public class EffectFirework extends BasicEffect {
 			ftype = FireworkEffect.Type.BALL;
 		}
 		if (getParam ("color","random").equalsIgnoreCase("random")) colorrnd = true;
-		color = Util.colorByName(getParam ("color","random"), Color.YELLOW);
+		color = EffectColor.getBukkitColor(getParam ("color","random"));
 	}
 
 
 	@Override
 	protected void play(final Location loc) {
 		if (ftypernd) ftype = FireworkEffect.Type.values()[PlayEffect.instance.u.getRandomInt(FireworkEffect.Type.values().length)];
-		if (colorrnd) color = Util.colorByName(getParam ("color","random"), Color.YELLOW);
+		if (colorrnd) color = EffectColor.getBukkitColor("RANDOM");
 		Bukkit.getScheduler().runTaskLater(PlayEffect.instance, new Runnable(){
 			@Override
 			public void run() {
 				FireworkEffect fe = FireworkEffect.builder().with(ftype).withColor(color).flicker(true).build();
 				AdditionalEffects.playFirework(loc, fe);
+				InstantFireworks.spawn(loc, fe);
 			}
 		}, 1);
 
