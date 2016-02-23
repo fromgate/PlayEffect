@@ -1,6 +1,6 @@
 name: PlayEffect
-main: me.fromgate.playeffect.PlayEffect
-version: 0.4.0
+main: me.fromgate.playeffect.PlayEffectPlugin
+version: 0.4.2
 website: http://fromgate.me
 author: fromgate, fromgate@gmail.com
 softdepend: [WorldEdit,WorldGuard]

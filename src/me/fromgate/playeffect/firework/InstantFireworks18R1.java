@@ -27,7 +27,7 @@
  * 
  */
 
-package me.fromgate.playeffect.customeffects;
+package me.fromgate.playeffect.firework;
 
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -40,10 +40,10 @@ import net.minecraft.server.v1_8_R1.EntityFireworks;
 import net.minecraft.server.v1_8_R1.PacketPlayOutEntityStatus;
 import net.minecraft.server.v1_8_R1.World;
 
-public class InstantFireworks extends EntityFireworks {
+public class InstantFireworks18R1 extends EntityFireworks {
 	Player[] players = null;
 
-	public InstantFireworks(World world, Player... p) {
+	public InstantFireworks18R1(World world, Player... p) {
 		super(world);
 		players = p;
 		this.a(0.25F, 0.25F);
@@ -71,7 +71,7 @@ public class InstantFireworks extends EntityFireworks {
 
 	public static void spawn(Location location, FireworkEffect effect, Player... players) {
 		try {
-			InstantFireworks firework = new InstantFireworks(((CraftWorld) location.getWorld()).getHandle(), players);
+			InstantFireworks18R1 firework = new InstantFireworks18R1(((CraftWorld) location.getWorld()).getHandle(), players);
 			
 			FireworkMeta meta = ((Firework) firework.getBukkitEntity()).getFireworkMeta();
 			meta.addEffect(effect);

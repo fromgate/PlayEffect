@@ -29,8 +29,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import me.fromgate.playeffect.PlayEffect;
+
+import me.fromgate.playeffect.PlayEffectPlugin;
 import me.fromgate.playeffect.VisualEffect;
+
 import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -40,10 +42,10 @@ import org.bukkit.inventory.meta.FireworkMeta;
 
 
 public class PacketNMS {
-	private static PlayEffect plg(){
-		return PlayEffect.instance;
+	private static PlayEffectPlugin plg(){
+		return PlayEffectPlugin.instance;
 	}
-	private static String [] tested_versions = {"v1_8_R1"};
+	private static String [] tested_versions = {"v1_8_R1","v1_8_R2","v1_8_R2"};
 	private static boolean disabled = true;
 	private static boolean activated = false;
 	private static String obcPrefix = "org.bukkit.craftbukkit.";
@@ -236,12 +238,12 @@ public class PacketNMS {
 	public static void playFirework164(final World world, final Location loc, final FireworkEffect fe){
 		if (disabled) return;
 		try{
-			Firework fw = (Firework) world.spawn(loc, Firework.class);
+			Firework fw = world.spawn(loc, Firework.class);
 			Object nms_world = null;
 			Object nms_firework = null;
 			nms_world = world_getHandle.invoke(world);
 			nms_firework = firework_getHandle.invoke(fw);
-			FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
+			FireworkMeta data = fw.getFireworkMeta();
 			data.clearEffects();
 			data.setPower(1);
 			data.addEffect(fe);
@@ -257,16 +259,16 @@ public class PacketNMS {
 	// Old. Not working in 1.8.1 :(
 	public static void playFirework172(World world, Location loc, FireworkEffect fe){
 		if (disabled) return;
-		Firework fw = (Firework) world.spawn(loc, Firework.class);
-		FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
+		Firework fw = world.spawn(loc, Firework.class);
+		FireworkMeta data = fw.getFireworkMeta();
 		data.clearEffects();
 		data.setPower(0);
 		data.addEffect(fe);
 		fw.setFireworkMeta(data);
 		try{
 			Object nms_firework = firework_getHandle.invoke(fw);
-			expectedLifespan.set(nms_firework, (int) 1);
-			ticksFlown.set(nms_firework, (int) 1);
+			expectedLifespan.set(nms_firework, 1);
+			ticksFlown.set(nms_firework, 1);
 		}catch(Exception e){
 			disabled = true;
 			log("Failed to create firework effect.");

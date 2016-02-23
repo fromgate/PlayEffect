@@ -2,7 +2,12 @@ package me.fromgate.playeffect;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import me.fromgate.playeffect.util.UpdateChecker;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,9 +25,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 
 public class Util extends FGUtilCore implements Listener {
-    PlayEffect plg;
+    PlayEffectPlugin plg;
     
-    public Util(PlayEffect plugin, boolean savelng, String language, String plgcmd){
+    public Util(PlayEffectPlugin plugin, boolean savelng, String language, String plgcmd){
         super (plugin, savelng, language, plgcmd,"playeffect");
         this.plg = plugin;
         initMessages();
@@ -151,16 +156,16 @@ public class Util extends FGUtilCore implements Listener {
     private void InitCmd(){
         cmds.clear();
         cmdlist = "";
-        addCmd("help", "config", "hlp_thishelp","&3/playeffect help [page]",'b',true);
-        addCmd("list", "config", "hlp_list","&3/playeffect list [page]",'b',true);
-        addCmd("info", "config", "hlp_info","&3/playeffect info <effect id | number>",'b',true);
-        addCmd("remove", "config", "hlp_remove","&3/playeffect remove <effect number>",'b',true);
-        addCmd("set", "set", "hlp_set","&3/playeffect set <effect> [param]",'b');
-        addCmd("wand", "wand", "hlp_wand","&3/playeffect wand <effect> [param]",'b');
-        addCmd("show", "show", "hlp_show","&3/playeffect show <effect id>",'b',true);
-        addCmd("hide", "show", "hlp_hide","&3/playeffect hide <effect id>",'b',true);
-        addCmd("check", "config", "hlp_check","&3/playeffect check [radius]",'b');
-        addCmd("restart", "config", "hlp_resart","&3/playeffect restart",'b',true);
+        addCmd("help", "config", "hlp_thishelp","&3/playeffect help [page]",'b',true); // +-
+        addCmd("list", "config", "hlp_list","&3/playeffect list [page]",'b',true);  // +
+        addCmd("info", "config", "hlp_info","&3/playeffect info <effect id | number>",'b',true); // +
+        addCmd("remove", "config", "hlp_remove","&3/playeffect remove <effect number>",'b',true); // +
+        addCmd("set", "set", "hlp_set","&3/playeffect set <effect> [param]",'b'); // +
+        addCmd("wand", "wand", "hlp_wand","&3/playeffect wand <effect> [param]",'b'); // +
+        addCmd("show", "show", "hlp_show","&3/playeffect show <effect id>",'b',true); // +
+        addCmd("hide", "show", "hlp_hide","&3/playeffect hide <effect id>",'b',true); // +
+        addCmd("check", "config", "hlp_check","&3/playeffect check [radius]",'b'); // +
+        addCmd("restart", "config", "hlp_resart","&3/playeffect restart",'b',true); // +
         addCmd("reload", "config", "hlp_reload","&3/playeffect reload",'b',true);
 
         for (VisualEffect ve : VisualEffect.values()){
@@ -190,7 +195,7 @@ public class Util extends FGUtilCore implements Listener {
         World w = Bukkit.getWorld(ln[0]);
         if (w==null) return null;
         for (int i = 1; i<ln.length; i++)
-            if (!(ln[i].matches("-?[0-9]+[0-9]*\\.[0-9]+")||ln[i].matches("-?[1-9]+[0-9]*"))) return null;
+            if (!(ln[i].matches("-?\\d+(\\.\\d+)?"))) return null;
         loc = new Location (w, Double.parseDouble(ln[1]),Double.parseDouble(ln[2]),Double.parseDouble(ln[3]));
         if (ln.length==6){
             loc.setYaw(Float.parseFloat(ln[4]));
@@ -201,12 +206,32 @@ public class Util extends FGUtilCore implements Listener {
 
     public static String locationToStrLoc(Location loc){
         if (loc == null) return "";
-        return loc.getWorld().getName()+","+
-        loc.getBlockX()+","+
-        loc.getBlockY()+","+
-        loc.getBlockZ();
+        StringBuilder sb = new StringBuilder(loc.getWorld().getName()).append(",");
+        sb.append(loc.getX()).append(",");
+        sb.append(loc.getY()).append(",");
+        sb.append(loc.getZ());
+        return sb.toString();
     }
 
+    public static List<Location> buildCircle (Location loc, int radius, double step){
+    	if (step<=0) return buildCircle(loc,radius);
+    	List<Location> circle = new ArrayList<Location>();
+    	double a = loc.getX();
+    	double b = loc.getZ();
+    	for (double x=-radius+step*2; x<=radius-step*2; x+=step){
+    		double z = Math.sqrt(radius*radius-x*x);
+    		circle.add(new Location (loc.getWorld(),a+x,loc.getY(),b+z));
+    		circle.add(new Location (loc.getWorld(),a+x,loc.getY(),b-z));
+    	}
+    	
+    	for (double z=-step*3; z<=step*3; z+=step){
+    		double x = Math.sqrt(radius*radius-z*z);
+    		circle.add(new Location (loc.getWorld(),a+x,loc.getY(),b+z));
+    		circle.add(new Location (loc.getWorld(),a-x,loc.getY(),b+z));
+    	}
+
+    	return circle;
+    }
     public static List<Location> buildCircle (Location loc, int radius){
         List<Location> circle = new ArrayList<Location>();
         if (loc == null) return circle;
@@ -256,7 +281,69 @@ public class Util extends FGUtilCore implements Listener {
                 plain.add(new Location (loc1.getWorld(), x, loc1.getBlockY(), z));
         return plain;
     }
+    
+    public static List<Location> buildPlain (Location loc1, Location loc2, double step){
+    	if (step<=0) return buildPlain (loc1,loc2);
+        List<Location> plain = new ArrayList<Location>();
+        if (loc1 == null) return plain;
+        if (loc2 == null) return plain;
+        if (loc1.getBlock().equals(loc2.getBlock())) {
+        	plain.add(loc1.getBlock().getLocation());
+        	return plain;
+        }
+        Location min = new Location(loc1.getWorld(),Math.min(loc1.getX(), loc2.getX()),Math.min(loc1.getY(), loc2.getY()),Math.min(loc1.getZ(), loc2.getZ()));
+        Location max = new Location(loc1.getWorld(),Math.max(loc1.getX(), loc2.getX()),Math.max(loc1.getY(), loc2.getY()),Math.max(loc1.getZ(), loc2.getZ()));
+        for (double x = min.getX(); x<=max.getX();x+=step)
+        		for (double z = min.getZ(); z<=max.getZ();z+=step)
+        			plain.add(new Location (loc1.getWorld(), x, loc1.getBlockY(), z));
+        return plain;
+    }
 
+    public static List<Location> buildLine (Location loc1, Location loc2, double step){
+    	if (step==0) return buildLine (loc1,loc2);
+    	List<Location> line = new ArrayList<Location>();
+        if (loc1==null) return line;
+        
+        line.add(loc1);
+        if (loc2==null) return line;
+        if (!loc1.getWorld().equals(loc2.getWorld())) return line;
+        World w = loc1.getWorld();
+        double distance = loc1.distance(loc2);
+        double stepCount = distance/step;
+    	if (stepCount<1) return line;
+    	double dx = (loc2.getX()-loc1.getX())/stepCount;
+    	double dy = (loc2.getY()-loc1.getY())/stepCount;
+    	double dz = (loc2.getZ()-loc1.getZ())/stepCount;
+    	double length = 0;
+    	Location nextLoc = loc1;
+    	
+    	while (step>0&&length<=distance){
+    		nextLoc = new Location (w, nextLoc.getX()+dx,nextLoc.getY()+dy,nextLoc.getZ()+dz, nextLoc.getYaw(), nextLoc.getPitch());
+    		line.add(nextLoc);
+    		length +=step;
+    	}
+        return line;
+    }
+    
+    public static List<Location> buildCuboid(Location loc1, Location loc2, boolean land, double step){
+    	if (step<=0) return buildCuboid (loc1,loc2,land);
+        List<Location> cube = new ArrayList<Location>();
+        if (loc1 == null) return cube;
+        if (loc2 == null) return cube;
+        if (loc1.distance(loc2)<step) {
+        	cube.add(loc1.getBlock().getLocation());
+        	return cube;
+        }
+        
+        Location min = new Location(loc1.getWorld(),Math.min(loc1.getX(), loc2.getX()),Math.min(loc1.getY(), loc2.getY()),Math.min(loc1.getZ(), loc2.getZ()));
+        Location max = new Location(loc1.getWorld(),Math.max(loc1.getX(), loc2.getX()),Math.max(loc1.getY(), loc2.getY()),Math.max(loc1.getZ(), loc2.getZ()));
+        for (double x = min.getX(); x<=max.getX();x+=step)
+        	for (double y = min.getY(); y<=max.getY();y+=step)
+        		for (double z = min.getZ(); z<=max.getZ();z+=step)
+        			cube.add(new Location (loc1.getWorld(), x, y, z));
+    	return cube;
+    }
+    
     public static List<Location> buildCuboid(Location loc1, Location loc2, boolean land){
         List<Location> cube = new ArrayList<Location>();
         if (loc1 == null) return cube;
@@ -275,6 +362,7 @@ public class Util extends FGUtilCore implements Listener {
                 }
         return cube;
     }
+    
 
     public static List<Location> buildLine (Location loc1, Location loc2){
         List<Location> line = new ArrayList<Location>();
@@ -342,7 +430,7 @@ public class Util extends FGUtilCore implements Listener {
         return line;
     }
 
-    private static int findHighest(int x, int y, int z){
+    private static int findHighest(double x, double y, double z){
         if ((x>=y)&&(x>=z)) return 1;
         if ((y>=x)&&(y>=z)) return 2;
         return 3;
@@ -394,7 +482,46 @@ public class Util extends FGUtilCore implements Listener {
     @EventHandler(priority=EventPriority.NORMAL)
     public void onPlayerJoin (PlayerJoinEvent event){
         Wand.clearWand(event.getPlayer());
-        plg.u.updateMsg(event.getPlayer());
+        UpdateChecker.updateMsg(event.getPlayer());
+    }
+    
+    
+    public static  Map<String,String> processLocation(CommandSender sender, Map<String,String> params){
+        Map<String,String> newparams = new HashMap<String,String>();
+        if (!params.containsKey("loc")) params.put("loc", "view");
+        if (!params.containsKey("loc2")) params.put("loc2", "eye");
+        
+        if ((sender instanceof Player)) {
+            Player p = (Player)sender;
+            for (String key : params.keySet()){
+                //newparams.put(key, params.get(key));
+                String value = params.get(key);
+                if (key.equalsIgnoreCase("loc")||key.equalsIgnoreCase("loc2")){
+                    if (value.equalsIgnoreCase("wg1")||value.equalsIgnoreCase("wg2")){
+                        if (WEGLib.isWE()){
+                            List<Location> locs = WEGLib.getSelectionLocations(p);
+                            if (locs.size()>0){
+                                if(value.equalsIgnoreCase("wg1")) value = Util.locationToStrLoc(locs.get(0));
+                                if(value.equalsIgnoreCase("wg2")) value = Util.locationToStrLoc(locs.get(1));    
+                            }
+                        }
+                    } else if (value.equalsIgnoreCase("here")) value = Util.locationToStrLoc(p.getLocation());
+                    else if (value.equalsIgnoreCase("view")) value = Util.locationToStrLoc(getTargetBlockFaceLocation (p));
+                    else if (value.equalsIgnoreCase("eye")) value = Util.locationToStrLoc(p.getEyeLocation());
+                }
+                newparams.put(key, value);
+            }
+            return newparams;
+        }
+        return params;
+    }
+    
+    @SuppressWarnings("deprecation")
+    public static Location getTargetBlockFaceLocation (Player p){
+        List<Block> blocks = p.getLineOfSight(null, 100);
+        if (blocks.isEmpty()) return null;
+        if (blocks.size()<=2) return blocks.get(0).getLocation();
+        return blocks.get(blocks.size()-2).getLocation();
     }
 
 }

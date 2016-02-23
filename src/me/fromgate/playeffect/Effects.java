@@ -27,7 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import me.fromgate.playeffect.effect.*;
+
+import me.fromgate.playeffect.effect.BasicEffect;
+import me.fromgate.playeffect.effect.StaticEffect;
+
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -37,8 +40,8 @@ import org.bukkit.entity.Player;
 
 public class Effects {
 
-    private static PlayEffect plg(){
-        return PlayEffect.instance;
+    private static PlayEffectPlugin plg(){
+        return PlayEffectPlugin.instance;
     }
 
     private static Util u(){
@@ -48,14 +51,14 @@ public class Effects {
     private static List<StaticEffect> effects = new ArrayList<StaticEffect>();
     //private static List<StaticEffect> ttleffects = new ArrayList<StaticEffect>();
 
-    protected static void stopAllEffects(){
+    public static void stopAllEffects(){
         for (StaticEffect se : effects)
             se.stopRepeater();
 /*        for (StaticEffect se : ttleffects)
             se.stopRepeater();*/
     }
 
-    protected static void startAllEffects(){
+    public static void startAllEffects(){
         for (StaticEffect se : effects)
             se.startRepeater();
     }
@@ -135,23 +138,12 @@ public class Effects {
         BasicEffect be = Effects.createEffect(effect, params);
         if (be == null) return;
         EffectQueue.addToQueue(be);
-        //long ttl = Util.parseTime(Effects.getParam(params, "ttl", ""));
-        //if (ttl<=0) EffectQueue.addToQueue(be);
-        //else Effects.createStaticEffect(be, false);
     }
 
 
     public static void playEffect (VisualEffect effect, String param){
         Map<String,String> params = parseParams(param);
         playEffect (effect,params);
-        /*
-        long ttl = Util.parseTime(Effects.getParam(params, "ttl", ""));
-        if (ttl<=0) playEffect (effect, params);
-        else {
-            BasicEffect be = Effects.createEffect(effect, params);
-            if (be == null) return;
-            Effects.createStaticEffect(be, false);
-        }*/
     }
 
 
@@ -159,11 +151,11 @@ public class Effects {
         if (effect == VisualEffect.BASIC) return null;
         Class<? extends BasicEffect> efc = effect.getClazz();
         try {
-            BasicEffect be = (BasicEffect) efc.newInstance();
+            BasicEffect be = efc.newInstance();
             be.initEffect(effect, loc, params);
             return be;
         } catch (Exception e){
-            PlayEffect.instance.u.log("Failed to create effect "+effect.name());
+            PlayEffectPlugin.instance.u.log("Failed to create effect "+effect.name());
             e.printStackTrace();
         }
         return null;
@@ -253,7 +245,7 @@ public class Effects {
         }
     }
 
-    protected static void reloadEffects(){
+    public static void reloadEffects(){
         effects.clear();
         loadEffects();
     }

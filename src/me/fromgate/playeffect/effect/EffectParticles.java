@@ -1,7 +1,8 @@
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.PlayEffect;
+import me.fromgate.playeffect.PlayEffectPlugin;
 import me.fromgate.playeffect.customeffects.AdditionalEffects;
+
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,7 +25,7 @@ public class EffectParticles extends BasicEffect {
         effectname = getParam ("effectname","cloud");
         String itemStr = getParam("block",getParam("item"));
         if (!itemStr.isEmpty()){
-        	ItemStack item = PlayEffect.instance.u.parseItemStack(itemStr);
+        	ItemStack item = PlayEffectPlugin.instance.u.parseItemStack(itemStr);
             id=item.getType().getId();
             data=item.getDurability();
         }
@@ -40,8 +41,9 @@ public class EffectParticles extends BasicEffect {
     	if (disabled) return;
     	if (l==null) return;
         Location loc = l;
-        loc.setX(loc.getBlockX()+0.5);
-        loc.setY(loc.getBlockY()+0.5);
+        /*loc.setX(loc.getBlockX()+0.5);
+         * loc.setZ(loc.getBlockZ()+0.5);
+        loc.setY(loc.getBlockY()+0.5);*/
         if (effectname.equalsIgnoreCase("footstep")) {
             loc.setY(loc.getBlockY());
             offsetY= 0f;
@@ -49,7 +51,6 @@ public class EffectParticles extends BasicEffect {
             loc.setY(loc.getBlockY()+0.9);
             offsetY= 0f;
         }
-        loc.setZ(loc.getBlockZ()+0.5);
         AdditionalEffects.sendParticlesPacket (loc, effectname, id, data, offsetX, offsetY, offsetZ, speed, number);
     }
 

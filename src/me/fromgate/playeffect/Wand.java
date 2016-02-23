@@ -30,8 +30,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public class Wand {
-    private static PlayEffect plg(){
-        return PlayEffect.instance;
+    private static PlayEffectPlugin plg(){
+        return PlayEffectPlugin.instance;
     }
 
     public static void setWand(Player p, String effect, String param){
@@ -40,8 +40,8 @@ public class Wand {
     }
 
     public static void clearWand (Player p){
-        if (p.hasMetadata("PE-effect")) p.removeMetadata("PE-effect", PlayEffect.instance);
-        if (p.hasMetadata("PE-param")) p.removeMetadata("PE-param", PlayEffect.instance);
+        if (p.hasMetadata("PE-effect")) p.removeMetadata("PE-effect", PlayEffectPlugin.instance);
+        if (p.hasMetadata("PE-param")) p.removeMetadata("PE-param", PlayEffectPlugin.instance);
     }
 
     public static boolean hasWand(Player p){

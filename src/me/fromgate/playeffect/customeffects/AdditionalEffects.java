@@ -22,7 +22,7 @@
 
 package me.fromgate.playeffect.customeffects;
 
-import me.fromgate.playeffect.PlayEffect;
+import me.fromgate.playeffect.PlayEffectPlugin;
 import me.fromgate.playeffect.VisualEffect;
 
 import org.bukkit.Bukkit;
@@ -93,7 +93,7 @@ public class AdditionalEffects {
 			if (isBukkitOld()) method = 2;//PacketNMS.playFirework(world, loc, fe);
 			else method = 0;
 		}
-		PlayEffect.instance.u.log("Determined firework method: "+method+ " ["+fireworkMethodNames[method]+"]");
+		PlayEffectPlugin.instance.u.log("Determined firework method: "+method+ " ["+fireworkMethodNames[method]+"]");
 		return method;
 	}
 	

@@ -26,14 +26,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import me.fromgate.playeffect.DrawType;
+import me.fromgate.playeffect.PlayEffectPlugin;
+import me.fromgate.playeffect.Util;
+import me.fromgate.playeffect.VisualEffect;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitTask;
-import me.fromgate.playeffect.DrawType;
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.Util;
-import me.fromgate.playeffect.VisualEffect;
 
 
 public abstract class BasicEffect {
@@ -42,18 +44,24 @@ public abstract class BasicEffect {
     private Long ttl = 0L;
     private Long freq = 0L;
     private BukkitTask task;
+    
     Map<String,String> params = new HashMap<String,String>();
+    
     private int radius=0; // radius:X
     private int amount=-1;
     private int chance=100;
     private boolean land = false; // land:true
+    
     private List<Location> cache  = new ArrayList<Location>();
+    
     DrawType drawtype = DrawType.NORMAL;
     private Location loc;
     private Location loc2;
+    
+    private double step=0;
 
     Util u(){
-        return PlayEffect.instance.u;
+        return PlayEffectPlugin.instance.u;
     }
     
     public void initEffect(VisualEffect visualEffect, Location loc, Map<String,String> params){
@@ -62,6 +70,7 @@ public abstract class BasicEffect {
         replaceParamIfExists("effectname",type.name());
         this.loc = loc;
         this.land = getParam("land",false);
+        this.step = getParam("step",0f);
         dur =  u().parseTime(getParam("dur", "0"));
         if (dur>0) freq = Math.max(type.getRepeatTicks(), u().timeToTicks(u().parseTime(getParam("freq", type.getRepeatTicks()+"t"))));
         String loc2str = getParam("loc2","");
@@ -93,7 +102,9 @@ public abstract class BasicEffect {
             else locs.add(loc);
             break;
         case LINE:
-            if (loc2 != null)  locs = buildLine(loc, loc2);
+            if (loc2 != null)  {
+            	locs = buildLine(loc, loc2, step);
+            }
             else locs.add(loc);
             break;
         case AREA:
@@ -109,22 +120,22 @@ public abstract class BasicEffect {
     }
 
     private List<Location> buildPlain(Location loc1, Location loc2) {
-        if (cache.isEmpty()) cache = Util.buildPlain(loc1, loc2);
+        if (cache.isEmpty()) cache = Util.buildPlain(loc1, loc2,step);
         return cache;
     }
 
     private List<Location> buildCuboid(Location loc1, Location loc2,boolean land) {
-        if (cache.isEmpty()) cache = Util.buildCuboid(loc, loc2, land);
+        if (cache.isEmpty()) cache = Util.buildCuboid(loc, loc2, land, step);
         return cache;
     }
 
     private List<Location> buildCircle(Location loc, int radius) {
-        if (cache.isEmpty()) cache = Util.buildCircle(loc, radius);
+        if (cache.isEmpty()) cache = Util.buildCircle(loc, radius,step);
         return cache;
     }
 
     private boolean rollDice(){
-        return PlayEffect.instance.u.rollDiceChance(this.chance);
+        return PlayEffectPlugin.instance.u.rollDiceChance(this.chance);
     }
 
     public void playEffect(){
@@ -141,7 +152,7 @@ public abstract class BasicEffect {
         if (System.currentTimeMillis()>ttl) return;
         playSingleEffect();
         if ((task==null)||(!Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId()))){
-            task = Bukkit.getScheduler().runTaskLater(PlayEffect.instance, new Runnable(){
+            task = Bukkit.getScheduler().runTaskLater(PlayEffectPlugin.instance, new Runnable(){
                 @Override
                 public void run(){
                     playMultipleEffect();
@@ -170,8 +181,11 @@ public abstract class BasicEffect {
         return this.loc;
     }
 
-    private List<Location> buildLine(Location loc1, Location loc2){
-        if (cache.isEmpty()) cache = Util.buildLine(loc, loc2);
+    private List<Location> buildLine(Location loc1, Location loc2, double step){
+        if (cache.isEmpty()) {
+        	if (step==0) cache = Util.buildLine(loc, loc2);
+        	else cache = Util.buildLine(loc1, loc2, step);
+        }
         return cache;
     }
 
@@ -192,13 +206,14 @@ public abstract class BasicEffect {
             }
 
             if (!cache.isEmpty()){
-                l = cache.get(PlayEffect.instance.u.getRandomInt(cache.size()));
+                l = cache.get(PlayEffectPlugin.instance.u.getRandomInt(cache.size()));
             }
         }
         return l;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         String param = "";
         for (String pstr : this.params.keySet()){
             if (pstr.equalsIgnoreCase("id")) continue;
@@ -213,7 +228,7 @@ public abstract class BasicEffect {
 
     public int getParam(String key, int defvalue){
         if (!params.containsKey(key)) return defvalue;
-        if (!PlayEffect.instance.u.isInteger(params.get(key))) return defvalue;
+        if (!PlayEffectPlugin.instance.u.isInteger(params.get(key))) return defvalue;
         return Integer.parseInt(params.get(key));
     }
 

@@ -26,7 +26,9 @@ package me.fromgate.playeffect;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import me.fromgate.playeffect.effect.BasicEffect;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -36,9 +38,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Cmd implements CommandExecutor{
-    PlayEffect plg;
+    PlayEffectPlugin plg;
 
-    public Cmd (PlayEffect plugin){
+    public Cmd (PlayEffectPlugin plugin){
         this.plg = plugin;
     }
 

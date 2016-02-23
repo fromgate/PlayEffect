@@ -24,7 +24,7 @@ package me.fromgate.playeffect.effect;
 
 import java.util.ArrayList;
 import java.util.List;
-import me.fromgate.playeffect.PlayEffect;
+import me.fromgate.playeffect.PlayEffectPlugin;
 import me.fromgate.playeffect.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -56,7 +56,7 @@ public class StaticEffect {
     public void startRepeater(){
         if (!enabled) return;
         if ((task==null)||(!Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId())))
-            task = Bukkit.getScheduler().runTaskTimer(PlayEffect.instance, new Runnable(){
+            task = Bukkit.getScheduler().runTaskTimer(PlayEffectPlugin.instance, new Runnable(){
                 @Override
                 public void run() {
                     effect.playEffect();

@@ -22,7 +22,7 @@
 
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.PlayEffect;
+import me.fromgate.playeffect.PlayEffectPlugin;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,7 +42,7 @@ public class EffectSmoke extends BasicEffect {
         World w = loc.getWorld();
         if (this.param<9) w.playEffect(loc, Effect.SMOKE, this.param);
         else if (this.param==9) for (int i = 0; i<9;i++) w.playEffect(loc, Effect.SMOKE, i);
-        else if (this.param == 10) w.playEffect(loc, Effect.SMOKE, PlayEffect.instance.u.getRandomInt(9));
+        else if (this.param == 10) w.playEffect(loc, Effect.SMOKE, PlayEffectPlugin.instance.u.getRandomInt(9));
     }
 
 

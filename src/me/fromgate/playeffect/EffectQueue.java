@@ -25,11 +25,11 @@ package me.fromgate.playeffect;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.fromgate.playeffect.effect.BasicEffect;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import me.fromgate.playeffect.effect.BasicEffect;
 
 public class EffectQueue {
     private static List<BasicEffect> queue = new ArrayList<BasicEffect>();
@@ -40,7 +40,7 @@ public class EffectQueue {
     }
     
     public static void init(final int ept, final int ttime){
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(PlayEffect.instance, new Runnable(){
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(PlayEffectPlugin.instance, new Runnable(){
             @Override
             public void run() {
                 if (queue.isEmpty()) return;
@@ -61,7 +61,7 @@ public class EffectQueue {
         return false;
     }
     
-    protected static void clearQueue(){
+    public static void clearQueue(){
         queue.clear();
     }
 }

@@ -22,7 +22,7 @@
 
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.PlayEffect;
+import me.fromgate.playeffect.PlayEffectPlugin;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -45,7 +45,7 @@ public class EffectSound extends BasicEffect {
         }
         pitch = getParam("pitch",1f);
         volume = getParam("volume",1f);
-        playsmoke = getParam ("showsmoke",PlayEffect.instance.playSmokeForSound);
+        playsmoke = getParam ("showsmoke",PlayEffectPlugin.instance.playSmokeForSound);
     }
 
     @Override

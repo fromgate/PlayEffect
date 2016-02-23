@@ -27,8 +27,8 @@ import me.fromgate.playeffect.effect.BasicEffect;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ImportNoSmoking {
-    private static PlayEffect plg(){
-        return PlayEffect.instance;
+    private static PlayEffectPlugin plg(){
+        return PlayEffectPlugin.instance;
     }
     // Import NoSmoking! v0.0.7 smoke (effect) points
     public static void loadSmokePoints(){
