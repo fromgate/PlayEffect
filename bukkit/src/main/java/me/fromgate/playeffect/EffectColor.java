@@ -65,7 +65,7 @@ public enum EffectColor {
 
     private static float[] intToFloatColors(int r, int g, int b) {
         float[] f = new float[]{(float) r / 255, (float) g / 255, (float) b / 255};
-        PlayEffectPlugin.instance.u.BC("rgb: " + r + ":" + f[0] + " / " + g + ":" + f[1] + " / " + b + ":" + f[2]);
+        //   Message.BC("rgb: " + r + ":" + f[0] + " / " + g + ":" + f[1] + " / " + b + ":" + f[2]);
 
         return f;
     }

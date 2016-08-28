@@ -26,6 +26,7 @@ import me.fromgate.playeffect.DrawType;
 import me.fromgate.playeffect.PlayEffectPlugin;
 import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.VisualEffect;
+import me.fromgate.playeffect.common.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -70,9 +71,9 @@ public abstract class BasicEffect {
         this.loc = loc;
         this.land = getParam("land", false);
         this.step = getParam("step", 0f);
-        dur = u().parseTime(getParam("dur", "0"));
+        dur = Time.parseTime(getParam("dur", "0"));
         if (dur > 0)
-            freq = Math.max(type.getRepeatTicks(), u().timeToTicks(u().parseTime(getParam("freq", type.getRepeatTicks() + "t"))));
+            freq = Math.max(type.getRepeatTicks(), Time.timeToTicks(Time.parseTime(getParam("freq", type.getRepeatTicks() + "t"))));
         String loc2str = getParam("loc2", "");
         if (!loc2str.isEmpty()) loc2 = Util.parseLocation(loc2str);
         radius = getParam("radius", 0);
@@ -228,7 +229,7 @@ public abstract class BasicEffect {
 
     public int getParam(String key, int defvalue) {
         if (!params.containsKey(key)) return defvalue;
-        if (!PlayEffectPlugin.instance.u.isInteger(params.get(key))) return defvalue;
+        if (!params.get(key).matches("\\d+")) return defvalue;
         return Integer.parseInt(params.get(key));
     }
 
@@ -264,7 +265,7 @@ public abstract class BasicEffect {
     }
 
     public long getRepeatTick() {
-        return Math.max(type.getRepeatTicks(), u().timeToTicks(this.dur));
+        return Math.max(type.getRepeatTicks(), Time.timeToTicks(this.dur));
     }
 
     public DrawType getDrawType() {

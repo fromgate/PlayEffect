@@ -22,6 +22,8 @@
 
 package me.fromgate.playeffect;
 
+import me.fromgate.playeffect.common.Message;
+import me.fromgate.playeffect.common.Time;
 import me.fromgate.playeffect.effect.BasicEffect;
 import me.fromgate.playeffect.effect.StaticEffect;
 import org.bukkit.Location;
@@ -69,7 +71,7 @@ public class Effects {
 
     public static boolean createStaticEffect(BasicEffect be, String id, String time, boolean run) {
         if (be == null) return false;
-        Long rpt = u().timeToTicks(u().parseTime(time));
+        Long rpt = Time.timeToTicks(Time.parseTime(time));
         if (!addStaticEffect(new StaticEffect(id, be, rpt))) return false;
         saveEffects();
         return true;
@@ -83,7 +85,7 @@ public class Effects {
 
     public static boolean createStaticEffect(BasicEffect be, boolean save) {
         if (be == null) return false;
-        Long rpt = u().timeToTicks(u().parseTime(be.getParam("time")));
+        Long rpt = Time.timeToTicks(Time.parseTime(be.getParam("time")));
         String id = getId(be.getParam("id", ""));
         if (!addStaticEffect(new StaticEffect(id, be, rpt))) return false;
         if (save) saveEffects();
@@ -145,7 +147,7 @@ public class Effects {
             be.initEffect(effect, loc, params);
             return be;
         } catch (Exception e) {
-            PlayEffectPlugin.instance.u.log("Failed to create effect " + effect.name());
+            Message.debugMessage("Failed to create effect ", effect.name());
             e.printStackTrace();
         }
         return null;
@@ -204,8 +206,10 @@ public class Effects {
                 if (!id.isEmpty() && (!se.getId().equalsIgnoreCase(id))) continue;
                 list.add("&3" + (i + 1) + " &a" + effects.get(i).toString());
             }
-            plg().u.printPage(sender, list, page, "msg_efflist", "", false, lpp);
-        } else plg().u.printMSG(sender, "msg_efflistempty");
+            Message.printPage(sender, list, Message.MSG_EFFLIST, page, lpp);
+        } else {
+            Message.MSG_EFFLISTEMPTY.print(sender);
+        }
     }
 
     public static void printEffectsInfo(CommandSender sender, String numid) {
@@ -219,7 +223,7 @@ public class Effects {
                 if (effects.get(i).getId().equalsIgnoreCase(numid))
                     ln.addAll(effects.get(i).getInfo());
         }
-        u().printPage(sender, ln, 1, "msg_effectinfo", "", false, 1000);
+        Message.printPage(sender, ln, Message.MSG_EFFECTINFO, 1, 1000);
     }
 
 
@@ -231,7 +235,7 @@ public class Effects {
         try {
             cfg.save(f);
         } catch (Exception e) {
-            plg().u.log("Failed to save effects.yml file");
+            Message.debugMessage("Failed to save effects.yml file");
         }
     }
 
@@ -247,7 +251,7 @@ public class Effects {
         try {
             cfg.load(f);
         } catch (Exception e) {
-            plg().u.log("Failed to load effects.yml file");
+            Message.debugMessage("Failed to load effects.yml file");
             return;
         }
 
@@ -314,7 +318,10 @@ public class Effects {
                                 list.add("&3" + (i + 1) + " &a" + effects.get(i).toString());
                         }
                     }
-        if (list.isEmpty()) plg().u.printMSG(p, "msg_efflistempty");
-        else plg().u.printPage(p, list, 1, "msg_efflist", "", false, 1000);
+        if (list.isEmpty()) {
+            Message.MSG_EFFLISTEMPTY.print(p);
+        } else {
+            Message.printPage(p, list, Message.MSG_EFFLIST, 1, 1000);
+        }
     }
 }

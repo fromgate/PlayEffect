@@ -25,7 +25,7 @@ public abstract class Cmd {
             this.subCommands = cd.subCommands();
             this.permission = cd.permission();
             this.allowConsole = cd.allowConsole();
-            this.description = cd.description();
+            this.description = cd.description().getText(cd.shortDescription());
         }
     }
 

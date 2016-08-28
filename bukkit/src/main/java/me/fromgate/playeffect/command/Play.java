@@ -3,6 +3,7 @@ package me.fromgate.playeffect.command;
 import me.fromgate.playeffect.Effects;
 import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.VisualEffect;
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 
-@CmdDefine(command = "playeffect", description = "hlp_hide", permission = "playeffect.play",
+@CmdDefine(command = "playeffect", description = Message.CMD_PLAY, permission = "playeffect.play",
         subCommands = {""}, allowConsole = true, shortDescription = "&3/playeffect <EffectType> [parameters]")
 public class Play extends Cmd {
 
@@ -23,7 +24,9 @@ public class Play extends Cmd {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length == 0) return false;
-        if (!checkParams(args)) return getUtil().returnMSG(true, sender, "msg_wrongeffect", args[0]);
+        if (!checkParams(args)) {
+            return Message.MSG_WRONGEFFECT.print(sender, args[0]);
+        }
         return playEffect(sender, args[0], Commander.unsplit(args, 1));
     }
 
@@ -35,7 +38,7 @@ public class Play extends Cmd {
         if (!paramPlayer.isEmpty()) player = Bukkit.getPlayerExact(paramPlayer);
         if ((player == null) && (sender instanceof Player)) player = (Player) sender;
         if ((player == null) & (!arg.contains("loc:"))) {
-            getUtil().printMSG(sender, "msg_consoleneedcoord", cmd + " " + arg);
+            return Message.MSG_CONSOLENEEDCOORD.print(cmd + " " + arg);
         }
         VisualEffect ve = VisualEffect.getEffectByName(cmd);
         if (ve == null) return false;

@@ -23,6 +23,9 @@
 package me.fromgate.playeffect;
 
 import me.fromgate.playeffect.command.Commander;
+import me.fromgate.playeffect.common.Message;
+import me.fromgate.playeffect.util.BukkitMessenger;
+import me.fromgate.playeffect.util.PlayListener;
 import me.fromgate.playeffect.util.UpdateChecker;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,7 +39,7 @@ public class PlayEffectPlugin extends JavaPlugin {
     int queueTickInterval = 1;
     int effectVisibleDistance = 32;
     public boolean playSmokeForSound = true;
-    String wand_item = "COAL";
+    public String wand_item = "COAL";
     boolean useProtocolLib = true;
 
     public Util u;
@@ -45,15 +48,20 @@ public class PlayEffectPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         loadCfg();
         saveCfg();
-        u = new Util(this, languageSave, language, "playeffect");
+
+        Message.init("PlayEffect", new BukkitMessenger(this), language, false, languageSave);
+
+        Util.init(this);
+
         UpdateChecker.init(this, "PlayEffect", "66204", "playeffect", this.versionCheck);
 
-        instance = this;
+
 
         EffectQueue.init(effectsPerTick, queueTickInterval);
-        getServer().getPluginManager().registerEvents(u, this);
+        getServer().getPluginManager().registerEvents(new PlayListener(), this);
         Commander.init(this);
         Effects.loadEffects();
         WEGLib.init();
@@ -63,6 +71,8 @@ public class PlayEffectPlugin extends JavaPlugin {
         } catch (IOException e) {
         }
     }
+
+
 
     @Override
     public void onDisable() {

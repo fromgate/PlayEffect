@@ -22,7 +22,7 @@
 
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.Util;
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -41,7 +41,7 @@ public class EffectBlockCrackSound extends BasicEffect {
     @Override
     protected void play(Location loc) {
         if ((block == null) || (!block.getType().isBlock())) {
-            u().logOnce("blockcracksound" + Util.locationToString(loc), "Failed to play BLOCKCRACKSOUND effect. Wrong block type: " + (getParam("item", "").isEmpty() ? getParam("block", "N/A").isEmpty() : getParam("item", "")));
+            Message.logMessage("blockcracksound", loc, "Failed to play BLOCKCRACKSOUND effect. Wrong block type: " + (getParam("item", "").isEmpty() ? getParam("block", "N/A").isEmpty() : getParam("item", "")));
             return;
         }
         World w = loc.getWorld();

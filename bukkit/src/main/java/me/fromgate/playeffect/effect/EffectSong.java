@@ -22,6 +22,7 @@
 
 package me.fromgate.playeffect.effect;
 
+import me.fromgate.playeffect.common.Time;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 
@@ -50,7 +51,7 @@ public class EffectSong extends BasicEffect {
 
     @Override
     public long getRepeatTick() {
-        return u().timeToTicks(st.getLength());
+        return Time.timeToTicks(st.getLength());
     }
 
     enum SongType {

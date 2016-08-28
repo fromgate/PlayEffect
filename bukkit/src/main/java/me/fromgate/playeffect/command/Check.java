@@ -1,10 +1,11 @@
 package me.fromgate.playeffect.command;
 
 import me.fromgate.playeffect.Effects;
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.entity.Player;
 
 
-@CmdDefine(command = "playeffect", description = "hlp_check", permission = "playeffect.config",
+@CmdDefine(command = "playeffect", description = Message.HLP_CHECK, permission = "playeffect.config",
         subCommands = {"check"}, allowConsole = false, shortDescription = "&3/playeffect check [radius]")
 public class Check extends Cmd {
 

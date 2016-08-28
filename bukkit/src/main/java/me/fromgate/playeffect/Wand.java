@@ -22,6 +22,7 @@
 
 package me.fromgate.playeffect;
 
+import me.fromgate.playeffect.common.Message;
 import me.fromgate.playeffect.effect.BasicEffect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -66,12 +67,19 @@ public class Wand {
         if (remove < 0) {
             BasicEffect be = getWandEffect(p, l);
             if (be == null) return;
-            if (Effects.createStaticEffect(be, true)) plg().u.printMSG(p, "msg_seteffect", be.toString());
-            else plg().u.printMSG(p, "msg_unabletoset");
+            if (Effects.createStaticEffect(be, true)) {
+                Message.MSG_SETEFFECT.print(p, be.toString());
+
+            } else {
+                Message.WAND_SET_FAIL.print(p);
+            }
         } else {
             String efstr = Effects.getStaticEffectStr(remove);
-            if (Effects.removeStaticEffect(remove)) plg().u.printMSG(p, "msg_removed", efstr);
-            else plg().u.printMSG(p, "msg_removefailed", efstr);
+            if (Effects.removeStaticEffect(remove)) {
+                Message.MSG_REMOVED.print(p, efstr);
+            } else {
+                Message.MSG_REMOVEFAILED.print(p, efstr);
+            }
         }
 
     }

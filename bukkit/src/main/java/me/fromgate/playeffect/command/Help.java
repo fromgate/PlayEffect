@@ -1,9 +1,10 @@
 package me.fromgate.playeffect.command;
 
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.command.CommandSender;
 
 
-@CmdDefine(command = "playeffect", description = "hlp_thishelp", permission = "playeffect.config", subCommands = {"help|hlp|\\?"},
+@CmdDefine(command = "playeffect", description = Message.HLP_THISHELP, permission = "playeffect.config", subCommands = {"help|hlp|\\?"},
         allowConsole = true, shortDescription = "&3/playeffect help [page]")
 public class Help extends Cmd {
 

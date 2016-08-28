@@ -1,175 +1,26 @@
 package me.fromgate.playeffect;
 
-import me.fromgate.playeffect.util.UpdateChecker;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.text.DecimalFormat;
 import java.util.*;
 
 
-public class Util extends FGUtilCore implements Listener {
-    PlayEffectPlugin plg;
+public class Util {
+    private static PlayEffectPlugin plg;
+    private static Random random;
 
-    public Util(PlayEffectPlugin plugin, boolean savelng, String language, String plgcmd) {
-        super(plugin, savelng, language, plgcmd, "playeffect");
-        this.plg = plugin;
-        initMessages();
-        InitCmd();
-        if (savelng) this.SaveMSG();
-    }
-
-    @Override
-    public boolean checkCmdPerm(CommandSender sender, String command) {
-        String cmd = command;
-        VisualEffect ve = VisualEffect.getEffectByName(command);
-        if (ve != null) cmd = ve.name();
-        if (!cmds.containsKey(cmd.toLowerCase())) return false;
-        Cmd cm = cmds.get(cmd.toLowerCase());
-        if (sender instanceof Player) return (cm.perm.isEmpty() || sender.hasPermission(cm.perm));
-        else return cm.console;
-    }
-
-
-    public void initMessages() {
-        addMSG("lst_title", "String list:");
-        addMSG("lst_footer", "Page: [%1% / %2%]");
-        addMSG("lst_listisempty", "List is empty");
-        addMSG("msg_config", "Configuration");
-        addMSG("cfgmsg_general_check-updates", "Check updates: %1%");
-        addMSG("cfgmsg_general_language", "Language: %1%");
-        addMSG("cfgmsg_general_language-save", "Save translation file: %1%");
-        addMSG("hlp_list", "%1% - list of placed effects");
-        addMSG("hlp_set", "%1% - setup effect");
-
-        addMSG("hlp_potion", "%1% - play Potion break effect");
-
-        addMSG("hlp_ender_signal", "%1% - play Ender Signal effect");
-        addMSG("hlp_ender_eye", "%1% - play Ender eye effect");
-        addMSG("hlp_portal", "%1% - play Portal effect");
-
-        addMSG("hlp_lightning", "%1% - play Lightning effect");
-
-        addMSG("hlp_explosion", "%1% - play Explosion effect");
-        addMSG("hlp_explosion_normal", "%1% - play explode effect");
-        addMSG("hlp_explosion_huge", "%1% - play Huge explosion effect");
-        addMSG("hlp_explosion_large", "%1% - play Large explode effect");
-
-        addMSG("hlp_fireworks_explode", "%1% - play Fireworks explosion effect");
-        addMSG("hlp_fireworks_spark", "%1% - play Fireworks spark effect");
-
-        addMSG("hlp_water_bubble", "%1% - play Water bubble effect (works only underwater)");
-        addMSG("hlp_water_splash", "%1% - play Water splash effect");
-        addMSG("hlp_water_wake", "%1% - play Water wake effect");
-        addMSG("hlp_water_drop", "%1% - play Water drop effect");
-
-        addMSG("hlp_suspended", "%1% - play Suspend effect (works only underwater)");
-        addMSG("hlp_suspended_depth", "%1% - play Depth suspend effect");
-
-        addMSG("hlp_crit", "%1% - play Crit effect");
-        addMSG("hlp_crit_magic", "%1% - play Magic crit effect");
-
-
-        addMSG("hlp_smoke", "%1% - play Smoke effect (you can define direction)");
-        addMSG("hlp_smoke_normal", "%1% - play Normal smoke effect");
-        addMSG("hlp_smoke_large", "%1% - play Large smoke effect");
-
-
-        addMSG("hlp_spell", "%1% - play Spell effect");
-        addMSG("hlp_spell_instant", "%1% - play Instant spell effect");
-        addMSG("hlp_spell_mob", "%1% - play Mob spell effect");
-        addMSG("hlp_spell_mob_ambient", "%1% - play Mob spell (ambient) effect");
-        addMSG("hlp_spell_witch", "%1% - play Witch magic effect");
-
-        addMSG("hlp_drip_water", "%1% - play Drip water effect");
-        addMSG("hlp_drip_lava", "%1% - play Drip lava effect");
-
-        addMSG("hlp_villager_angry", "%1% - play Angry villager effect");
-        addMSG("hlp_villager_happy", "%1% - play Happy villager effect");
-
-        addMSG("hlp_flame", "%1% - play Flame (new) effect");
-        addMSG("hlp_flame_spawner", "%1% - play Flame effect");
-
-        addMSG("hlp_item_crack", "%1% - play Icon crack effect");
-        addMSG("hlp_block_crack", "%1% - play Block crack effect");
-        addMSG("hlp_block_crack_sound", "%1% - play Block crack effect with break sound");
-        addMSG("hlp_block_dust", "%1% - play Block dust effect");
-
-        addMSG("hlp_town_aura", "%1% - play Town aura effect");
-
-        addMSG("hlp_note", "%1% - play Note effect");
-        addMSG("hlp_enchantment_table", "%1% - play Runes (magic book) effect");
-        addMSG("hlp_lava", "%1% - play Lava effect");
-        addMSG("hlp_footstep", "%1% - play Footstep effect");
-        addMSG("hlp_cloud", "%1% - play Smoke effect");
-        addMSG("hlp_redstone", "%1% - play Redstone dust effect");
-        addMSG("hlp_snowball", "%1% - play Snowball effect");
-        addMSG("hlp_snow_shovel", "%1% - play Snow showel effect");
-        addMSG("hlp_slime", "%1% - play Slime effect");
-        addMSG("hlp_heart", "%1% - play Heart effect");
-        addMSG("hlp_barrier", "%1% - play Barrier effect");
-
-        addMSG("hlp_item_take", "%1% - play Item take effect (I don''know what is it)");
-        addMSG("hlp_mob_appearance", "%1% - play Mob appearance effect");
-
-        addMSG("hlp_sound", "%1% - play Sound effect");
-        addMSG("hlp_song", "%1% - play Song effect");
-        addMSG("msg_effectset", "Effect was succesfully set");
-        addMSG("msg_unknowneffect", "Unknown effect type %1%");
-        addMSG("hlp_info", "%1% - show info about defined effect");
-        addMSG("hlp_remove", "%1% - remove static effect");
-        addMSG("hlp_wand", "%1% - to enable/disable wand mode");
-        addMSG("msg_wandenabled", "Wand mode enabled");
-        addMSG("msg_seteffect", "Effect set %1%");
-        addMSG("msg_removed", "Effect %1% removed");
-        addMSG("msg_efflist", "Effect list");
-        addMSG("msg_efflistempty", "Effect list is empty");
-        addMSG("msg_efflist", "Effect list");
-        addMSG("msg_efflistempty", "Effect list is empty");
-        addMSG("hlp_show", "%1% - show effect(s)");
-        addMSG("hlp_hide", "%1% - hide effect(s)");
-        addMSG("hlp_resart", "%1% - restart static effects");
-        addMSG("hlp_reload", "%1% - reload configuration");
-        addMSG("hlp_check", "%1% - find effect around you");
-        addMSG("msg_restarted", "All effects restarted!");
-        addMSG("msg_reloaded", "All effects reloaded and restarted!");
-        addMSG("msg_removefailed", "Failed to remove effect %1%");
-        addMSG("msg_consoleneedcoord", "You must define effect location when executing command play <effect> by console");
-        addMSG("msg_wrongeffect", "Failed parse effect name %1%");
-    }
-
-    private void InitCmd() {
-        cmds.clear();
-        cmdlist = "";
-        addCmd("help", "config", "hlp_thishelp", "&3/playeffect help [page]", 'b', true); // +-
-        addCmd("list", "config", "hlp_list", "&3/playeffect list [page]", 'b', true);  // +
-        addCmd("info", "config", "hlp_info", "&3/playeffect info <effect id | number>", 'b', true); // +
-        addCmd("remove", "config", "hlp_remove", "&3/playeffect remove <effect number>", 'b', true); // +
-        addCmd("set", "set", "hlp_set", "&3/playeffect set <effect> [param]", 'b'); // +
-        addCmd("wand", "wand", "hlp_wand", "&3/playeffect wand <effect> [param]", 'b'); // +
-        addCmd("show", "show", "hlp_show", "&3/playeffect show <effect id>", 'b', true); // +
-        addCmd("hide", "show", "hlp_hide", "&3/playeffect hide <effect id>", 'b', true); // +
-        addCmd("check", "config", "hlp_check", "&3/playeffect check [radius]", 'b'); // +
-        addCmd("restart", "config", "hlp_resart", "&3/playeffect restart", 'b', true); // +
-        addCmd("reload", "config", "hlp_reload", "&3/playeffect reload", 'b', true);
-
-        for (VisualEffect ve : VisualEffect.values()) {
-            if (ve == VisualEffect.BASIC) continue;
-            String ven = ve.name().toLowerCase();
-            addCmd(ven, "play", "hlp_" + ven, "&3/playeffect " + ven + " [parameters]", 'b', true);
-        }
+    public static void init(PlayEffectPlugin plugin){
+        plg = plugin;
+        random = new Random();
     }
 
     public static String locationToString(Location loc) {
@@ -183,7 +34,6 @@ public class Util extends FGUtilCore implements Listener {
         return lstr;
     }
 
-
     public static Location parseLocation(String strloc) {
         Location loc = null;
         if (strloc.isEmpty()) return null;
@@ -191,8 +41,9 @@ public class Util extends FGUtilCore implements Listener {
         if (!((ln.length == 4) || (ln.length == 6))) return null;
         World w = Bukkit.getWorld(ln[0]);
         if (w == null) return null;
-        for (int i = 1; i < ln.length; i++)
+        for (int i = 1; i < ln.length; i++) {
             if (!(ln[i].matches("-?\\d+(\\.\\d+)?"))) return null;
+        }
         loc = new Location(w, Double.parseDouble(ln[1]), Double.parseDouble(ln[2]), Double.parseDouble(ln[3]));
         if (ln.length == 6) {
             loc.setYaw(Float.parseFloat(ln[4]));
@@ -440,8 +291,9 @@ public class Util extends FGUtilCore implements Listener {
         locs = sort(locs);
         List<Location> out = new ArrayList<Location>();
         int step = locs.size() / amount;
-        for (int i = locs.size() - 1; i >= 0; i = i - step)
+        for (int i = locs.size() - 1; i >= 0; i = i - step) {
             out.add(locs.get(i));
+        }
         return out;
     }
 
@@ -466,25 +318,6 @@ public class Util extends FGUtilCore implements Listener {
         return locs;
     }
 
-
-    @SuppressWarnings("deprecation")
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        Player p = event.getPlayer();
-        if (!Wand.hasWand(p)) return;
-        if (p.getItemInHand() == null) return;
-        if (!compareItemStr(p.getItemInHand(), plg.wand_item)) return;
-        Wand.toggleEffect(p, event.getClickedBlock());
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Wand.clearWand(event.getPlayer());
-        UpdateChecker.updateMsg(event.getPlayer());
-    }
-
-
     public static Map<String, String> processLocation(CommandSender sender, Map<String, String> params) {
         Map<String, String> newparams = new HashMap<String, String>();
         if (!params.containsKey("loc")) params.put("loc", "view");
@@ -493,7 +326,6 @@ public class Util extends FGUtilCore implements Listener {
         if ((sender instanceof Player)) {
             Player p = (Player) sender;
             for (String key : params.keySet()) {
-                //newparams.put(key, params.get(key));
                 String value = params.get(key);
                 if (key.equalsIgnoreCase("loc") || key.equalsIgnoreCase("loc2")) {
                     if (value.equalsIgnoreCase("wg1") || value.equalsIgnoreCase("wg2")) {
@@ -524,5 +356,199 @@ public class Util extends FGUtilCore implements Listener {
         return blocks.get(blocks.size() - 2).getLocation();
     }
 
+    public static boolean compareItemStr(int item_id, int item_data, String itemstr) {
+        return compareItemStrIgnoreName(item_id, item_data, 1, itemstr);
+    }
+
+    // Надо использовать маску: id:data*amount, id:data, id*amount
+
+    @SuppressWarnings("deprecation")
+    public static boolean compareItemStr(ItemStack item, String str) {
+        String itemstr = str;
+        String name = "";
+        if (itemstr.contains("$")) {
+            name = str.substring(0, itemstr.indexOf("$"));
+            name = ChatColor.translateAlternateColorCodes('&', name.replace("_", " "));
+            itemstr = str.substring(name.length() + 1);
+        }
+        if (itemstr.isEmpty()) return false;
+        if (!name.isEmpty()) {
+            String iname = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : "";
+            if (!name.equals(iname)) return false;
+        }
+        return compareItemStrIgnoreName(item.getTypeId(), item.getDurability(), item.getAmount(), itemstr); // ;compareItemStr(item, itemstr);
+    }
+
+
+    @SuppressWarnings("deprecation")
+    public static boolean compareItemStrIgnoreName(int item_id, int item_data, int item_amount, String itemstr) {
+        if (!itemstr.isEmpty()) {
+            int id = -1;
+            int amount = 1;
+            int data = -1;
+            String[] si = itemstr.split("\\*");
+            if (si.length > 0) {
+                if ((si.length == 2) && si[1].matches("[1-9]+[0-9]*")) amount = Integer.parseInt(si[1]);
+                String ti[] = si[0].split(":");
+                if (ti.length > 0) {
+                    if (ti[0].matches("[0-9]*")) id = Integer.parseInt(ti[0]);
+                    else {
+                        try {
+                            id = Material.getMaterial(ti[0]).getId();
+                        } catch (Exception e) {
+                            //logOnce("unknownitem" + ti[0], "Unknown item: " + ti[0]);
+                        }
+                    }
+                    if ((ti.length == 2) && (ti[1]).matches("[0-9]*")) data = Integer.parseInt(ti[1]);
+                    return ((item_id == id) && ((data < 0) || (item_data == data)) && (item_amount >= amount));
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public static boolean rollDiceChance(int chance) {
+        return (random.nextInt(100) < chance);
+    }
+
+    public static int tryChance(int chance) {
+        return random.nextInt(chance);
+    }
+
+    public static int getRandomInt(int maxvalue) {
+        return random.nextInt(maxvalue);
+    }
+
+    public static boolean isWordInList(String word, String str) {
+        String[] ln = str.split(",");
+        if (ln.length > 0)
+            for (int i = 0; i < ln.length; i++)
+                if (ln[i].equalsIgnoreCase(word)) return true;
+        return false;
+    }
+
+    public static boolean isIntegerGZ(String str) {
+        return (str.matches("[1-9]+[0-9]*"));
+    }
+
+    @SuppressWarnings("deprecation")
+    public static ItemStack parseItemStack(String itemstr) {
+        if (itemstr.isEmpty()) return null;
+
+        String istr = itemstr;
+        String enchant = "";
+        String name = "";
+
+        if (istr.contains("$")) {
+            name = istr.substring(0, istr.indexOf("$"));
+            istr = istr.substring(name.length() + 1);
+        }
+        if (istr.contains("@")) {
+            enchant = istr.substring(istr.indexOf("@") + 1);
+            istr = istr.substring(0, istr.indexOf("@"));
+        }
+        int id = -1;
+        int amount = 1;
+        short data = 0;
+        String[] si = istr.split("\\*");
+
+        if (si.length > 0) {
+            if (si.length == 2) amount = Math.max(getMinMaxRandom(si[1]), 1);
+            String ti[] = si[0].split(":");
+            if (ti.length > 0) {
+                if (ti[0].matches("[0-9]*")) id = Integer.parseInt(ti[0]);
+                else {
+                    Material m = Material.getMaterial(ti[0].toUpperCase());
+                    if (m == null) {
+                        //logOnce("wrongitem" + ti[0], "Could not parse item material name (id) " + ti[0]);
+                        return null;
+                    }
+                    id = m.getId();
+                }
+                if ((ti.length == 2) && (ti[1]).matches("[0-9]*")) data = Short.parseShort(ti[1]);
+                ItemStack item = new ItemStack(id, amount, data);
+                if (!enchant.isEmpty()) {
+                    item = setEnchantments(item, enchant);
+                }
+                if (!name.isEmpty()) {
+                    ItemMeta im = item.getItemMeta();
+                    im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name.replace("_", " ")));
+                    item.setItemMeta(im);
+                }
+                return item;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static ItemStack setEnchantments(ItemStack item, String enchants) {
+        ItemStack i = item.clone();
+        if (enchants.isEmpty()) return i;
+        String[] ln = enchants.split(",");
+        for (String ec : ln) {
+            if (ec.isEmpty()) continue;
+            Color clr = colorByName(ec);
+            if (clr != null) {
+                if (isIdInList(item.getTypeId(), "298,299,300,301")) {
+                    LeatherArmorMeta meta = (LeatherArmorMeta) i.getItemMeta();
+                    meta.setColor(clr);
+                    i.setItemMeta(meta);
+                }
+            } else {
+                String ench = ec;
+                int level = 1;
+                if (ec.contains(":")) {
+                    ench = ec.substring(0, ec.indexOf(":"));
+                    level = Math.max(1, getMinMaxRandom(ec.substring(ench.length() + 1)));
+                }
+                Enchantment e = Enchantment.getByName(ench.toUpperCase());
+                if (e == null) continue;
+                i.addUnsafeEnchantment(e, level);
+            }
+        }
+        return i;
+    }
+
+    public static Color colorByName(String colorname) {
+        Color[] clr = {Color.WHITE, Color.SILVER, Color.GRAY, Color.BLACK,
+                Color.RED, Color.MAROON, Color.YELLOW, Color.OLIVE,
+                Color.LIME, Color.GREEN, Color.AQUA, Color.TEAL,
+                Color.BLUE, Color.NAVY, Color.FUCHSIA, Color.PURPLE};
+        String[] clrs = {"WHITE", "SILVER", "GRAY", "BLACK",
+                "RED", "MAROON", "YELLOW", "OLIVE",
+                "LIME", "GREEN", "AQUA", "TEAL",
+                "BLUE", "NAVY", "FUCHSIA", "PURPLE"};
+        for (int i = 0; i < clrs.length; i++)
+            if (colorname.equalsIgnoreCase(clrs[i])) return clr[i];
+        return null;
+    }
+
+    public static int getMinMaxRandom(String minmaxstr) {
+        int min = 0;
+        int max = 0;
+        String strmin = minmaxstr;
+        String strmax = minmaxstr;
+        if (minmaxstr.contains("-")) {
+            strmin = minmaxstr.substring(0, minmaxstr.indexOf("-"));
+            strmax = minmaxstr.substring(minmaxstr.indexOf("-") + 1);
+        }
+        if (strmin.matches("[1-9]+[0-9]*")) min = Integer.parseInt(strmin);
+        max = min;
+        if (strmax.matches("[1-9]+[0-9]*")) max = Integer.parseInt(strmax);
+        if (max > min) return min + tryChance(1 + max - min);
+        else return min;
+    }
+
+    public static boolean isIdInList(int id, String str) {
+        if (!str.isEmpty()) {
+            String[] ln = str.split(",");
+            if (ln.length > 0)
+                for (int i = 0; i < ln.length; i++)
+                    if ((!ln[i].isEmpty()) && ln[i].matches("[0-9]*") && (Integer.parseInt(ln[i]) == id)) return true;
+        }
+        return false;
+    }
 }
 

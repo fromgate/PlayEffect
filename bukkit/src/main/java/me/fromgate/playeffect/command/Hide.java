@@ -1,16 +1,20 @@
 package me.fromgate.playeffect.command;
 
 import me.fromgate.playeffect.Effects;
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.command.CommandSender;
 
-@CmdDefine(command = "playeffect", description = "hlp_hide", permission = "playeffect.show",
+@CmdDefine(command = "playeffect", description = Message.HLP_HIDE, permission = "playeffect.show",
         subCommands = {"hide"}, allowConsole = true, shortDescription = "&3/playeffect hide <effect id>")
 public class Hide extends Cmd {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length < 1) return false;
-        if (Effects.setEnabled(args[1], false)) getUtil().printMSG(sender, "msg_hideeffect", args[1]);
-        else getUtil().printMSG(sender, "msg_unknown", args[1]);
+        if (Effects.setEnabled(args[1], false)) {
+            Message.MSG_HIDEEFFECT.print(sender, args[1]);
+        } else {
+            Message.MSG_UNKNOWNEFFECT.print(sender, args[1]);
+        }
         return true;
     }
 }

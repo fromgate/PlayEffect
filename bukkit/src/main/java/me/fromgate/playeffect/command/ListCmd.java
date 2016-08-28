@@ -1,10 +1,11 @@
 package me.fromgate.playeffect.command;
 
 import me.fromgate.playeffect.Effects;
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.command.CommandSender;
 
 
-@CmdDefine(command = "playeffect", description = "hlp_list", permission = "playeffect.config",
+@CmdDefine(command = "playeffect", description = Message.HLP_LIST, permission = "playeffect.config",
         subCommands = {"list|lst"}, allowConsole = true, shortDescription = "&3/playeffect list [page]")
 public class ListCmd extends Cmd {
 

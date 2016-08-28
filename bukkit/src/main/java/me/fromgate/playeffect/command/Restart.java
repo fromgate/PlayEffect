@@ -2,10 +2,11 @@ package me.fromgate.playeffect.command;
 
 import me.fromgate.playeffect.EffectQueue;
 import me.fromgate.playeffect.Effects;
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.command.CommandSender;
 
 
-@CmdDefine(command = "playeffect", description = "hlp_resart", permission = "playeffect.config", subCommands = {"restart"},
+@CmdDefine(command = "playeffect", description = Message.HLP_RESART, permission = "playeffect.config", subCommands = {"restart"},
         allowConsole = true, shortDescription = "&3/playeffect restart")
 public class Restart extends Cmd {
 
@@ -14,7 +15,7 @@ public class Restart extends Cmd {
         Effects.stopAllEffects();
         EffectQueue.clearQueue();
         Effects.startAllEffects();
-        getUtil().printMSG(sender, "msg_restarted");
+        Message.MSG_RESTARTED.print(sender);
         return true;
     }
 }

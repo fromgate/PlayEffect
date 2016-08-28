@@ -3,13 +3,14 @@ package me.fromgate.playeffect.command;
 import me.fromgate.playeffect.Effects;
 import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.VisualEffect;
+import me.fromgate.playeffect.common.Message;
 import me.fromgate.playeffect.effect.BasicEffect;
 import org.bukkit.command.CommandSender;
 
 import java.util.Map;
 
 
-@CmdDefine(command = "playeffect", description = "hlp_set", permission = "playeffect.set", subCommands = {"set"},
+@CmdDefine(command = "playeffect", description = Message.HLP_SET, permission = "playeffect.set", subCommands = {"set"},
         allowConsole = true, shortDescription = "&3/playeffect set <effect> id:<id> [param]")
 public class Set extends Cmd {
     //addCmd("set", "set", "hlp_set","&3/playeffect set <effect> [param]",'b');
@@ -22,9 +23,12 @@ public class Set extends Cmd {
         if (VisualEffect.contains(arg1)) {
             Map<String, String> params = Effects.parseParams(arg2);
             params = Util.processLocation(sender, params);
-            if (setEffect(sender, arg1, params)) getUtil().printMSG(sender, "msg_effectset", arg1);
-            else getUtil().printMSG(sender, "msg_effectnotset", arg1);
-        } else getUtil().printMSG(sender, "msg_unknowneffect", arg1);
+            if (setEffect(sender, arg1, params)) {
+                Message.MSG_EFFECTSET.print(arg1);
+            } else {
+                Message.MSG_EFFECTONOTSET.print(arg1);
+            }
+        } else Message.MSG_UNKNOWNEFFECT.print(arg1);
         return true;
     }
 

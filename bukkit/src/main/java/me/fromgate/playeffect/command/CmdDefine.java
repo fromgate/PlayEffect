@@ -1,5 +1,7 @@
 package me.fromgate.playeffect.command;
 
+import me.fromgate.playeffect.common.Message;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -13,7 +15,7 @@ public @interface CmdDefine {
 
     public boolean allowConsole() default false;
 
-    public String description();
+    public Message description();
 
     public String shortDescription();
 }

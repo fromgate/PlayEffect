@@ -1,0 +1,111 @@
+lng_load_fail: Failed to load languages from file. Default message used
+lng_save_fail: 'Не удалось сохранить файл'
+lng_print_fail: 'Не удалось вывести сообщение (получатель - null): %1%'
+lng_config: '[MESSAGES] Сообщения: %1% Языки: %2% Сохранять перевод: %1% Режим отладки: %3%'
+word_unknown: 'Неизвестно'
+wrong_permission: 'Недостаточен уровень полномочий для выполнения команды'
+permission_fail: 'Недостаточен уровень полномочий для выполнения команды'
+player_commad_only: 'Эту команду можно использользовать только в игре'
+cmd_registered: 'Команда зарегистрирована: %1%'
+cmd_failed: 'Не удалось выполнить команду. Наберите %1% для помощи!'
+hlp_title: '%1% | Справка'
+msg_outdated: '%1% устарел!'
+msg_pleasedownload: 'Последняя версия (%1%) доступна по адресу:'
+hlp_help: Помощь
+hlp_thishelp: '%1% - помощь'
+hlp_execcmd: '%1% - выполнить команду'
+hlp_typecmd: Наберите %1% для получения дополнительной помощи
+hlp_typecmdpage: Наберите %1% для просмотра другой страницы помощи
+hlp_commands: 'Команды:'
+hlp_cmdparam_command: команда
+hlp_cmdparam_page: страница
+hlp_cmdparam_parameter: параметр
+cmd_play: '%1% - проиграть эффект'
+cmd_unknown: 'Неизвестная команда: %1%'
+cmd_cmdpermerr: Произошла ошибка (проверьте синтаксис команды, пермишены)
+enabled: вкл.
+disabled: выкл.
+lst_title: 'Список:'
+lst_footer: 'Страница: [%1% / %2%]'
+lst_listisempty: Список пуст
+msg_config: Настройки
+hlp_list: '%1% - перечень установленных эффектов'
+hlp_set: '%1% - установить эффект'
+hlp_potion: '%1% - проиграть эффект Potion break'
+hlp_ender_signal: '%1% - проиграть эффект Ender Signal'
+hlp_ender_eye: '%1% - проиграть эффект Ender eye'
+hlp_portal: '%1% - проиграть эффект Portal'
+hlp_lightning: '%1% - проиграть эффект Lightning'
+hlp_explosion: '%1% - проиграть эффект Explosion'
+hlp_explosion_normal: '%1% - проиграть эффект explode'
+hlp_explosion_huge: '%1% - проиграть эффект Huge explosion'
+hlp_explosion_large: '%1% - проиграть эффект Large explode'
+hlp_fireworks_explode: '%1% - проиграть эффект Fireworks explosion'
+hlp_fireworks_spark: '%1% - проиграть эффект Fireworks spark'
+hlp_water_bubble: '%1% - проиграть эффект Water bubble effect (works only underwater)'
+hlp_water_splash: '%1% - проиграть эффект Water splash'
+hlp_water_wake: '%1% - проиграть эффект Water wake'
+hlp_water_drop: '%1% - проиграть эффект Water drop'
+hlp_suspended: '%1% - проиграть эффект Suspend effect (works only underwater)'
+hlp_suspended_depth: '%1% - проиграть эффект Depth suspend'
+hlp_crit: '%1% - проиграть эффект Crit'
+hlp_crit_magic: '%1% - проиграть эффект Magic crit'
+hlp_smoke: '%1% - проиграть эффект Smoke'
+hlp_smoke_normal: '%1% - проиграть эффект Normal smoke'
+hlp_smoke_large: '%1% - проиграть эффект Large smoke'
+hlp_spell: '%1% - проиграть эффект Spell'
+hlp_spell_instant: '%1% - проиграть эффект Instant spell'
+hlp_spell_mob: '%1% - проиграть эффект Mob spell'
+hlp_spell_mob_ambient: '%1% - проиграть эффект Mob spell (ambient)'
+hlp_spell_witch: '%1% - проиграть эффект Witch magic'
+hlp_drip_water: '%1% - проиграть эффект Drip water'
+hlp_drip_lava: '%1% - проиграть эффект Drip lava'
+hlp_villager_angry: '%1% - проиграть эффект Angry villager'
+hlp_villager_happy: '%1% - проиграть эффект Happy villager'
+hlp_flame: '%1% - проиграть эффект Flame'
+hlp_flame_spawner: '%1% - проиграть эффект Flame'
+hlp_item_crack: '%1% - проиграть эффект Icon crack'
+hlp_block_crack: '%1% - проиграть эффект Block crack'
+hlp_block_crack_sound: '%1% - проиграть эффект Block crack'
+hlp_block_dust: '%1% - проиграть эффект Block dust'
+hlp_town_aura: '%1% - проиграть эффект Town aura'
+hlp_note: '%1% - проиграть эффект Note'
+hlp_enchantment_table: '%1% - проиграть эффект Runes (magic book)'
+hlp_lava: '%1% - проиграть эффект Lava'
+hlp_footstep: '%1% - проиграть эффект Footstep'
+hlp_cloud: '%1% - проиграть эффект Smoke'
+hlp_redstone: '%1% - проиграть эффет Redstone'
+hlp_snowball: '%1% - проиграть эффект Snowball'
+hlp_snow_shovel: '%1% - проиграть эффект Snow showel'
+hlp_slime: '%1% - проиграть эффект Slime'
+hlp_heart: '%1% - проиграть эффект Heart'
+hlp_barrier: '%1% - проиграть эффект Barrier'
+hlp_item_take: '%1% - проиграть эффект Item take'
+hlp_mob_appearance: '%1% - проиграть эффект Mob appearance'
+hlp_sound: '%1% - проиграть эффект Sound'
+hlp_song: '%1% - проиграть эффект Song'
+msg_effectset: Эффект установлен
+msg_effectonotset: Не удалось установить эффект %1%
+msg_unknowneffect: 'Неизвестный тип эффекта: %1%'
+hlp_info: '%1% - отобразить информацию об эффекте'
+hlp_remove: '%1% - удалить установленный эффект'
+hlp_wand: '%1% - включить/выключить "уголёк"'
+msg_wandenabled: Инструмент PlayEffect включен
+msg_seteffect: Установлен эффект %1% (%2%)
+wand_set_fail: Не удалось установить эффект
+msg_removed: Эффект %1% удален
+msg_efflist: Список эффектов
+msg_efflistempty: Список эффектов пуст
+hlp_show: '%1% - отобразить (включить) эффект'
+hlp_hide: '%1% - скрыть (выключить) эффект'
+hlp_resart: '%1% - перезапустить эффекты'
+hlp_reload: '%1% - перезагрузить настройки'
+hlp_check: '%1% - найти эффекты вокруг Вас'
+msg_restarted: Эффекты перезапущены!
+msg_reloaded: Настройки и эффекты перезагружены!
+msg_removefailed: Не удалось удалить эффект %1%
+msg_consoleneedcoord: Необходимо задать координаты или целевого игрока при выполнении команды play <effect> из консоли
+msg_wrongeffect: Не удалось распознать эффект %1%
+msg_hideeffect: 'Эффект %1% скрыт'
+msg_showeffect: 'Эффект %1% отображён'
+msg_effectinfo: 'Эффекты:'
