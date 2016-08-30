@@ -437,7 +437,7 @@ public enum Message {
 
     public static void printLines(Object sender, Collection<String> lines) {
         for (String l : lines) {
-            messenger.print(sender, l);
+            messenger.print(sender, colorize(l));
         }
     }
 
@@ -468,4 +468,10 @@ public enum Message {
     }
 
 
+    public static Message getByName(String name) {
+        for (Message m : values()){
+            if (m.name().equalsIgnoreCase(name)) return m;
+        }
+        return null;
+    }
 }

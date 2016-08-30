@@ -1,5 +1,7 @@
 package me.fromgate.playeffect.command;
 
+import me.fromgate.playeffect.VisualEffect;
+import me.fromgate.playeffect.common.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -7,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.ChatPaginator;
 import org.bukkit.util.ChatPaginator.ChatPage;
-import org.bukkit.util.Java15Compat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,13 +64,22 @@ public class Commander implements CommandExecutor {
 
     public static void printHelp(CommandSender sender, int page) {
         List<String> helpList = new ArrayList<String>();
+        Message.HLP_TITLE.print(sender, "PlayEffect",'6','6');
         for (Cmd cmd : commands) {
             helpList.add(cmd.getDescription());
         }
+        for (VisualEffect v : VisualEffect.values()){
+            if (v == VisualEffect.BASIC) continue;
+            Message m = Message.getByName("HLP_"+v.name());
+            if (m == null) continue;
+            helpList.add(m.getText("&3/playeffect "+v.name().toLowerCase()));
+        }
         int pageHeight = (sender instanceof Player) ? 9 : 1000;
         ChatPage chatPage = paginate(helpList, page, 60, pageHeight);
-        for (String str : chatPage.getLines())
+        for (String str : chatPage.getLines()) {
             sender.sendMessage(str);
+        }
+        Message.LST_FOOTER.print(chatPage.getPageNumber(), chatPage.getTotalPages());
     }
 
     public static ChatPage paginate(List<String> unpaginatedStrings, int pageNumber, int lineLength, int pageHeight) {
@@ -81,7 +91,7 @@ public class Commander implements CommandExecutor {
         int actualPageNumber = pageNumber <= totalPages ? pageNumber : totalPages;
         int from = (actualPageNumber - 1) * pageHeight;
         int to = from + pageHeight <= lines.size() ? from + pageHeight : lines.size();
-        String[] selectedLines = Java15Compat.Arrays_copyOfRange(lines.toArray(new String[lines.size()]), from, to);
+        String[] selectedLines = Arrays.copyOfRange(lines.toArray(new String[lines.size()]), from, to);
         return new ChatPage(selectedLines, actualPageNumber, totalPages);
     }
 
