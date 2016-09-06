@@ -24,20 +24,16 @@ public class NmsEffects {
 
 
     public static void playFirework(Location location, FireworkEffect effect, Player... players) {
-        try {
-            InstantFireworks firework = new InstantFireworks(((CraftWorld) location.getWorld()).getHandle(), players);
-            FireworkMeta meta = ((Firework) firework.getBukkitEntity()).getFireworkMeta();
-            meta.addEffect(effect);
+        InstantFireworks firework = new InstantFireworks(((CraftWorld) location.getWorld()).getHandle(), players);
+        FireworkMeta meta = ((Firework) firework.getBukkitEntity()).getFireworkMeta();
+        meta.addEffect(effect);
 
-            ((Firework) firework.getBukkitEntity()).setFireworkMeta(meta);
+        ((Firework) firework.getBukkitEntity()).setFireworkMeta(meta);
 
-            firework.setPosition(location.getX(), location.getY(), location.getZ());
+        firework.setPosition(location.getX(), location.getY(), location.getZ());
 
-            if ((((CraftWorld) location.getWorld()).getHandle()).addEntity(firework)) {
-                firework.setInvisible(true);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if ((((CraftWorld) location.getWorld()).getHandle()).addEntity(firework)) {
+            firework.setInvisible(true);
         }
     }
 }
