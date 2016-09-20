@@ -22,7 +22,19 @@
 
 package me.fromgate.playeffect;
 
-import me.fromgate.playeffect.effect.*;
+import me.fromgate.playeffect.effect.BasicEffect;
+import me.fromgate.playeffect.effect.EffectBlockCrackSound;
+import me.fromgate.playeffect.effect.EffectExplosion;
+import me.fromgate.playeffect.effect.EffectEye;
+import me.fromgate.playeffect.effect.EffectFirework;
+import me.fromgate.playeffect.effect.EffectFlame;
+import me.fromgate.playeffect.effect.EffectLightning;
+import me.fromgate.playeffect.effect.EffectParticles;
+import me.fromgate.playeffect.effect.EffectPotion;
+import me.fromgate.playeffect.effect.EffectSignal;
+import me.fromgate.playeffect.effect.EffectSmoke;
+import me.fromgate.playeffect.effect.EffectSong;
+import me.fromgate.playeffect.effect.EffectSound;
 import org.bukkit.Particle;
 
 public enum VisualEffect {
@@ -94,7 +106,7 @@ public enum VisualEffect {
     BLOCK_CRACK("BLOCKCRACK", Particle.BLOCK_CRACK, "effectname:blockcrack_ num:5 block:GLASS:0", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step,item,block"),
     BLOCK_CRACK_SOUND("BLOCKCRACKSOUND", EffectBlockCrackSound.class, "block:GLASS:0", 5, "item,block"),
     BLOCK_DUST("BLOCKDUST", Particle.BLOCK_DUST, "effectname:blockdust_ num:5 block:GLASS:0", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step,item,block"),
-    FALLING_DUST("FALLDUST", Particle.FALLING_DUST, "effectname:falldust num:5 block:GLASS:0", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step,item,block"),
+    FALLING_DUST("FALLDUST", "FALLING_DUST", "effectname:falldust num:5 block:GLASS:0", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step,item,block"),
     ITEM_TAKE("ITEM_TAKE", Particle.ITEM_TAKE, "effectname:take num:5", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step,item,block"),
     MOB_APPEARANCE("MOB_APPEARANCE", Particle.MOB_APPEARANCE, "effectname:mobappearance num:5", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step"),
 
@@ -129,6 +141,29 @@ public enum VisualEffect {
         this.spigotParticle = null;
     }
 
+    VisualEffect(String alias, String spigotParticle, String param, long minrpt, String paramlist) {
+        this.alias = alias;
+        this.param = param;
+        this.min_rpt_time = minrpt;
+        this.paramlist = paramlist;
+        this.distance = 32;
+        this.spigotParticle = null;
+
+        Particle pt = null;
+        for (Particle p : Particle.values()) {
+            if (p.name().equalsIgnoreCase(spigotParticle)) pt = p;
+        }
+        if (pt == null) {
+            PlayEffectPlugin.getPlugin().getLogger().info("Effect "+spigotParticle+ " is not supported by your server version. This effect wil replaced with smoke effect");
+            clazz = EffectSmoke.class;
+            this.min_rpt_time = 5;
+        } else {
+            this.spigotParticle = pt;
+            this.clazz = EffectParticles.class;
+        }
+
+
+    }
 
     VisualEffect(String alias, Particle spigotParticle, String param, long minrpt, String paramlist) {
         this.alias = alias;

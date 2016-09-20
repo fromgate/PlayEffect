@@ -26,6 +26,7 @@ import me.fromgate.playeffect.common.Message;
 import me.fromgate.playeffect.common.Time;
 import me.fromgate.playeffect.effect.BasicEffect;
 import me.fromgate.playeffect.effect.StaticEffect;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -204,7 +205,7 @@ public class Effects {
             for (int i = 0; i < effects.size(); i++) {
                 StaticEffect se = effects.get(i);
                 if (!id.isEmpty() && (!se.getId().equalsIgnoreCase(id))) continue;
-                list.add("&3" + (i + 1) + " &a" + effects.get(i).toString());
+                list.add(ChatColor.translateAlternateColorCodes('&',"&3" + (i + 1) + " &a" + effects.get(i).toString()));
             }
             Message.printPage(sender, list, Message.MSG_EFFLIST, page, lpp);
         } else {

@@ -24,6 +24,7 @@ package me.fromgate.playeffect;
 
 import me.fromgate.playeffect.command.Commander;
 import me.fromgate.playeffect.common.Message;
+import me.fromgate.playeffect.nms.NmsEffects;
 import me.fromgate.playeffect.util.BukkitMessenger;
 import me.fromgate.playeffect.util.PlayListener;
 import me.fromgate.playeffect.util.UpdateChecker;
@@ -63,6 +64,7 @@ public class PlayEffectPlugin extends JavaPlugin {
         EffectQueue.init(effectsPerTick, queueTickInterval);
         getServer().getPluginManager().registerEvents(new PlayListener(), this);
         Commander.init(this);
+        NmsEffects.init();
         Effects.loadEffects();
         WEGLib.init();
         try {

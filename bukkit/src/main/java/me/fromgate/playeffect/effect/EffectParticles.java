@@ -65,8 +65,8 @@ public class EffectParticles extends BasicEffect {
             offsetY = 0f;
         }
 
-        switch (particle) {
-            case ITEM_CRACK:
+        switch (particle.name()) {
+            case "ITEM_CRACK":
                 loc.getWorld().spawnParticle(particle, loc,
                         this.number,
                         offsetX,
@@ -74,9 +74,9 @@ public class EffectParticles extends BasicEffect {
                         offsetZ,
                         speed, new ItemStack(id, 1, (byte) data));
                 break;
-            case BLOCK_CRACK:
-            case BLOCK_DUST:
-            case FALLING_DUST:
+            case "BLOCK_CRACK":
+            case "BLOCK_DUST":
+            case "FALLING_DUST":
                 loc.getWorld().spawnParticle(particle, loc,
                         this.number,
                         offsetX,

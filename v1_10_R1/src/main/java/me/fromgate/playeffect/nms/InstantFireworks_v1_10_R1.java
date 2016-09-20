@@ -6,10 +6,10 @@ import net.minecraft.server.v1_10_R1.World;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class InstantFireworks extends EntityFireworks {
+public class InstantFireworks_v1_10_R1 extends EntityFireworks {
     Player[] players = null;
 
-    public InstantFireworks(World world, Player... p) {
+    public InstantFireworks_v1_10_R1(World world, Player... p) {
         super(world);
         players = p;
         this.setSize(0.25F, 0.25F);

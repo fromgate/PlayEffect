@@ -3,31 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>PlayEffect</artifactId>
+        <artifactId>nms</artifactId>
         <groupId>me.fromgate.playeffect</groupId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../nms/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>nms</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>../v1_10_R1</module>
-        <module>../v1_9_R2</module>
-    </modules>
-    <dependencies>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.9-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.fromgate.playeffect</groupId>
-            <artifactId>nms</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+    <artifactId>nms_v1_10_R1</artifactId>
+
     <plugins>
         <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -37,5 +21,4 @@
             </configuration>
         </plugin>
     </plugins>
-
 </project>
