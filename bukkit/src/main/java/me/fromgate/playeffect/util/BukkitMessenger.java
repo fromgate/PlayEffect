@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,7 +107,8 @@ public class BukkitMessenger implements Messenger {
             if (f.exists()) lng.load(f);
             else {
                 InputStream is = plugin.getClass().getResourceAsStream("/lang/" + language + ".lng");
-                if (is != null) lng.load(is);
+                if (is != null) lng.load(new InputStreamReader(is, "UTF-8"));
+                is.close();
             }
         } catch (Exception e) {
             LNG_LOAD_FAIL.log();

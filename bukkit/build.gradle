@@ -5,11 +5,26 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources"
+        }
+    }
+}
+
+
 repositories {
     mavenCentral()
+    mavenLocal()
     maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url "http://maven.sk89q.com/repo/" }
 }
 
 dependencies {
     compile group: 'org.bukkit', name: 'bukkit', version: '1.12-R0.1-SNAPSHOT'
+    compile group: 'com.sk89q', name: 'worldedit', version: '6.0.0-SNAPSHOT'
+    compile group: 'com.sk89q', name: 'worldguard', version: '6.1.1-SNAPSHOT'
+    compile project(':nms')
+    compile project(':common')
 }

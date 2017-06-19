@@ -10,7 +10,6 @@ lib/
 nms/build.gradle
 nms/src/main/resources/
 nms/src/test/
-src/
 v1_10_R1/build.gradle
 v1_10_R1/src/main/resources/
 v1_10_R1/src/test/
