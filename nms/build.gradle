@@ -1,0 +1,19 @@
+group 'me.fromgate.playeffect'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+}
+
+dependencies {
+    compile group: 'org.bukkit', name: 'bukkit', version: '1.12-R0.1-SNAPSHOT'
+    compile project(':v1_9_R1')
+    compile project(':v1_9_R2')
+    compile project(':v1_10_R1')
+    compile project(':v1_11_R1')
+}

@@ -350,7 +350,7 @@ public class Util {
 
     @SuppressWarnings("deprecation")
     public static Location getTargetBlockFaceLocation(Player p) {
-        List<Block> blocks = p.getLineOfSight((HashSet<Byte>) null, 100);
+        List<Block> blocks = p.getLineOfSight(null, 100);
         if (blocks.isEmpty()) return null;
         if (blocks.size() <= 2) return blocks.get(0).getLocation();
         return blocks.get(blocks.size() - 2).getLocation();

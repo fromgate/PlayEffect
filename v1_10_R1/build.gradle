@@ -1,0 +1,15 @@
+group 'me.fromgate.playeffect'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile group: 'org.bukkit', name: 'craftbukkit', version: '1.10.2-R0.1-SNAPSHOT'
+}

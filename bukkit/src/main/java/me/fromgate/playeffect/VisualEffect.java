@@ -111,7 +111,13 @@ public enum VisualEffect {
     MOB_APPEARANCE("MOB_APPEARANCE", Particle.MOB_APPEARANCE, "effectname:mobappearance num:5", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step"),
 
     SOUND("SOUND", EffectSound.class, "", 128, 10, "type,pitch,volume"),
-    SONG("SONG", EffectSong.class, "", 128, 5, "disc");
+    SONG("SONG", EffectSong.class, "", 128, 5, "disc"),
+
+    // 1.11 effects
+    DRAGON_BREATH("DRAGON_BREATH","DRAGON_BREATH","effectname:dragonbreath num:100",5,"num,speed,offset,offsetX,offsetY,offsetZ"),
+    END_ROD("END_ROD","END_ROD","effectname:endrod num:20",5,"num,speed,offset,offsetX,offsetY,offsetZ,step"),
+    DAMAGE_INDICATOR("DAMAGE_INDICATOR", "DAMAGE_INDICATOR", "effectname:dmgind num:10", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step"),
+    SWEEP_ATTACK("SWEEP_ATTACK", "SWEEP_ATTACK", "effectname:attack num:3", 5, "num,speed,offset,offsetX,offsetY,offsetZ,step"),;
 
     private Class<? extends BasicEffect> clazz;
     private String alias; //Old name!

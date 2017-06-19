@@ -110,10 +110,13 @@ public enum Message {
     HLP_SLIME("%1% - play Slime effect"),
     HLP_HEART("%1% - play Heart effect"),
     HLP_BARRIER("%1% - play Barrier effect"),
-
     HLP_ITEM_TAKE("%1% - play Item take effect (I don''know what is it)"),
     HLP_MOB_APPEARANCE("%1% - play Mob appearance effect"),
-
+    HLP_FALLING_DUST("%1% - play Falling Dust effect"),
+    HLP_DRAGON_BREATH("%1% - play Dragon Breath effect"),
+    HLP_END_ROD("%1% - play End Rod effect"),
+    HLP_DAMAGE_INDICATOR("%1% - play Damage Indicator effect"),
+    HLP_SWEEP_ATTACK("%1% - play Sweep Attack effect"),
     HLP_SOUND("%1% - play Sound effect"),
     HLP_SONG("%1% - play Song effect"),
     MSG_EFFECTSET("Effect %1% was succesfully set"),
@@ -463,7 +466,7 @@ public enum Message {
     }
 
     public static boolean logMessage(Object... s) {
-        if (debugMode) messenger.log(clean(join(s)));
+        messenger.log(clean(join(s)));
         return true;
     }
 

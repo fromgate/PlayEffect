@@ -1,0 +1,10 @@
+rootProject.name = 'PlayEffect'
+include 'bukkit'
+include 'common'
+include 'nms'
+include 'v1_9_R1'
+include 'v1_9_R2'
+include 'v1_10_R1'
+include 'v1_11_R1'
+include 'v1_12_R1'
+

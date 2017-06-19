@@ -1,16 +1,16 @@
 package me.fromgate.playeffect.nms;
 
-import net.minecraft.server.v1_9_R1.EntityFireworks;
-import net.minecraft.server.v1_9_R1.PacketPlayOutEntityStatus;
-import net.minecraft.server.v1_9_R1.World;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+
+import net.minecraft.server.v1_12_R1.EntityFireworks;
+import net.minecraft.server.v1_12_R1.PacketPlayOutEntityStatus;
+import net.minecraft.server.v1_12_R1.World;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class InstantFireworks_v1_9_R1 extends EntityFireworks {
-
+public class InstantFireworks_v1_12_R1 extends EntityFireworks {
     Player[] players = null;
 
-    public InstantFireworks_v1_9_R1(World world, Player... p) {
+    public InstantFireworks_v1_12_R1(World world, Player... p) {
         super(world);
         players = p;
         this.setSize(0.25F, 0.25F);
@@ -19,7 +19,7 @@ public class InstantFireworks_v1_9_R1 extends EntityFireworks {
     boolean gone = false;
 
     @Override
-    public void m() {
+    public void B_() {
         if (gone)
             return;
         if (!world.isClientSide) {

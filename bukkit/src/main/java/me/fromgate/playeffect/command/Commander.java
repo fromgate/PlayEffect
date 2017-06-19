@@ -71,15 +71,18 @@ public class Commander implements CommandExecutor {
         for (VisualEffect v : VisualEffect.values()){
             if (v == VisualEffect.BASIC) continue;
             Message m = Message.getByName("HLP_"+v.name());
-            if (m == null) continue;
+            if (m == null) {
+                Message.logMessage("Help message not defined for effect:",v.name());
+                continue;
+            }
             helpList.add(m.getText("&3/playeffect "+v.name().toLowerCase()));
         }
-        int pageHeight = (sender instanceof Player) ? 9 : 1000;
+        int pageHeight = (sender instanceof Player) ? 8 : 1000;
         ChatPage chatPage = paginate(helpList, page, 60, pageHeight);
         for (String str : chatPage.getLines()) {
             sender.sendMessage(str);
         }
-        Message.LST_FOOTER.print(chatPage.getPageNumber(), chatPage.getTotalPages());
+        Message.LST_FOOTER.print(sender, chatPage.getPageNumber(), chatPage.getTotalPages());
     }
 
     public static ChatPage paginate(List<String> unpaginatedStrings, int pageNumber, int lineLength, int pageHeight) {
