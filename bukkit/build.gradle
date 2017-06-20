@@ -1,10 +1,6 @@
 group 'me.fromgate.playeffect'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
 sourceSets {
     main {
         resources {
@@ -15,7 +11,6 @@ sourceSets {
 
 
 repositories {
-    mavenCentral()
     mavenLocal()
     maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
     maven { url "http://maven.sk89q.com/repo/" }
