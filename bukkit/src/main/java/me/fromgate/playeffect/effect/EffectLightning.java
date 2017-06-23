@@ -22,13 +22,13 @@
 
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.PlayEffectPlugin;
+import me.fromgate.playeffect.Util;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 public class EffectLightning extends BasicEffect {
 
-    private String lightmode = "anytime,day,night,day-storm,night-storm,storm";
+    private final static String LIGHTMODE = "anytime,day,night,day-storm,night-storm,storm";
     private int chance = 50;
     private String mode = "storm";
 
@@ -37,7 +37,7 @@ public class EffectLightning extends BasicEffect {
     public void onInit() {
         chance = getParam("lchance", 100);
         mode = getParam("mode", "anytime");
-        if (!PlayEffectPlugin.instance.u.isWordInList(mode, lightmode)) mode = "storm";
+        if (!Util.isWordInList(mode, LIGHTMODE)) mode = "storm";
     }
 
 
@@ -47,7 +47,7 @@ public class EffectLightning extends BasicEffect {
     }
 
     private boolean isTimeToBolt(World w) {
-        if (!PlayEffectPlugin.instance.u.rollDiceChance(chance)) return false;
+        if (!Util.rollDiceChance(chance)) return false;
         if (mode.contains("night") && day(w)) return false;
         if (mode.contains("day") && (!day(w))) return false;
         if (mode.contains("storm") && (!w.hasStorm())) return false;

@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Commander implements CommandExecutor {
-    private static List<Cmd> commands = new ArrayList<Cmd>();
+    private static List<Cmd> commands = new ArrayList<>();
     private static JavaPlugin plugin;
     private static Commander commander;
 
@@ -63,7 +63,7 @@ public class Commander implements CommandExecutor {
     }
 
     public static void printHelp(CommandSender sender, int page) {
-        List<String> helpList = new ArrayList<String>();
+        List<String> helpList = new ArrayList<>();
         Message.HLP_TITLE.print(sender, "PlayEffect",'6','6');
         for (Cmd cmd : commands) {
             helpList.add(cmd.getDescription());
@@ -86,7 +86,7 @@ public class Commander implements CommandExecutor {
     }
 
     public static ChatPage paginate(List<String> unpaginatedStrings, int pageNumber, int lineLength, int pageHeight) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (String str : unpaginatedStrings) {
             lines.addAll(Arrays.asList(ChatPaginator.wordWrap(str, lineLength)));
         }
@@ -119,8 +119,7 @@ public class Commander implements CommandExecutor {
     public static String[] getSubArgs(String[] args, int num) {
         if (args.length <= num) return new String[0];
         String[] params = new String[args.length - num];
-        for (int i = num; i < args.length; i++)
-            params[i - num] = args[i];
+        System.arraycopy(args, num, params, 0, args.length - num);
         return params;
     }
 }

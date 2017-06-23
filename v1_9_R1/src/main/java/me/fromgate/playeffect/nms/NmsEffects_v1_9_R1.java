@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class NmsEffects_v1_9_R1 {
 
     public static void playExplosion(Location loc, float size, double distance) {
-        PacketPlayOutExplosion packetPlayOutExplosion = new PacketPlayOutExplosion(loc.getX(), loc.getY(), loc.getZ(), size, new ArrayList<BlockPosition>(), new Vec3D(0, 0, 0));
+        PacketPlayOutExplosion packetPlayOutExplosion = new PacketPlayOutExplosion(loc.getX(), loc.getY(), loc.getZ(), size, new ArrayList<>(), new Vec3D(0, 0, 0));
         ((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(null, loc.getX(), loc.getY(), loc.getZ(), distance,
                 ((CraftWorld) loc.getWorld()).getHandle().dimension, packetPlayOutExplosion);
     }

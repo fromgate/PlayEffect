@@ -1,6 +1,6 @@
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.PlayEffectPlugin;
+import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.VisualEffect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -24,7 +24,7 @@ public class EffectParticles extends BasicEffect {
         if (this.type == null) this.type = VisualEffect.CLOUD;
         String itemStr = getParam("block", getParam("item"));
         if (!itemStr.isEmpty()) {
-            ItemStack item = PlayEffectPlugin.instance.u.parseItemStack(itemStr);
+            ItemStack item = Util.parseItemStack(itemStr);
             id = item.getType().getId();
             data = item.getDurability();
         }

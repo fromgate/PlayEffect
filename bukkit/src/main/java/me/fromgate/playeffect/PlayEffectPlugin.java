@@ -52,14 +52,8 @@ public class PlayEffectPlugin extends JavaPlugin {
         instance = this;
         loadCfg();
         saveCfg();
-
         Message.init("PlayEffect", new BukkitMessenger(this), language, false, languageSave);
-
-        Util.init(this);
-
         UpdateChecker.init(this, "PlayEffect", "66204", "playeffect", this.versionCheck);
-
-
 
         EffectQueue.init(effectsPerTick, queueTickInterval);
         getServer().getPluginManager().registerEvents(new PlayListener(), this);
@@ -70,7 +64,7 @@ public class PlayEffectPlugin extends JavaPlugin {
         try {
             MetricsLite metrics = new MetricsLite(this);
             metrics.start();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 

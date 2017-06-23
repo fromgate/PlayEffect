@@ -1,6 +1,7 @@
 package me.fromgate.playeffect.command;
 
 import me.fromgate.playeffect.Effects;
+import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.common.Message;
 import org.bukkit.command.CommandSender;
 
@@ -13,7 +14,7 @@ public class Remove extends Cmd {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         String arg = Commander.unsplit(args, 1);
-        if (getUtil().isIntegerGZ(arg)) {
+        if (Util.isIntegerGZ(arg)) {
             if (Effects.removeStaticEffect(Integer.parseInt(arg) - 1)) {
                 Message.MSG_REMOVED.print(sender, arg);
             } else {

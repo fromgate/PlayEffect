@@ -213,12 +213,12 @@ public enum VisualEffect {
     }
 
     public boolean isValidParam(String param) {
-        return PlayEffectPlugin.instance.u.isWordInList(param, BASIC.getParamList()) || PlayEffectPlugin.instance.u.isWordInList(param, getParamList());
+        return Util.isWordInList(param, BASIC.getParamList()) || Util.isWordInList(param, getParamList());
     }
 
     public static boolean isValidParameter(String param) {
         for (VisualEffect ve : VisualEffect.values())
-            if (PlayEffectPlugin.instance.u.isWordInList(param, ve.getParamList())) return true;
+            if (Util.isWordInList(param, ve.getParamList())) return true;
         return false;
     }
 

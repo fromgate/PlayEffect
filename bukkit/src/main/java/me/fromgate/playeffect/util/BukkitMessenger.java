@@ -13,9 +13,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static me.fromgate.playeffect.common.Message.LNG_LOAD_FAIL;
@@ -23,7 +21,7 @@ import static me.fromgate.playeffect.common.Message.LNG_SAVE_FAIL;
 
 public class BukkitMessenger implements Messenger {
 
-    JavaPlugin plugin;
+    final JavaPlugin plugin;
 
 
     public BukkitMessenger(JavaPlugin plugin) {
@@ -73,7 +71,6 @@ public class BukkitMessenger implements Messenger {
 
     @Override
     public boolean broadcast(String permission, String text) {
-        List<Player> playerList = new ArrayList<Player>();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (permission == null || permission.isEmpty() || player.hasPermission(permission)) {
                 player.sendMessage(text);
@@ -100,7 +97,7 @@ public class BukkitMessenger implements Messenger {
     @SuppressWarnings("deprecation")
     @Override
     public Map<String, String> load(String language) {
-        Map<String, String> msg = new HashMap<String, String>();
+        Map<String, String> msg = new HashMap<>();
         YamlConfiguration lng = new YamlConfiguration();
         File f = new File(plugin.getDataFolder() + File.separator + language + ".lng");
         try {

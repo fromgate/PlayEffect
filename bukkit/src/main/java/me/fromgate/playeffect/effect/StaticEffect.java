@@ -57,12 +57,7 @@ public class StaticEffect {
     public void startRepeater() {
         if (!enabled) return;
         if ((task == null) || (!Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId())))
-            task = Bukkit.getScheduler().runTaskTimer(PlayEffectPlugin.instance, new Runnable() {
-                @Override
-                public void run() {
-                    effect.playEffect();
-                }
-            }, 10L, repeat_ticks);
+            task = Bukkit.getScheduler().runTaskTimer(PlayEffectPlugin.instance, () -> effect.playEffect(), 10L, repeat_ticks);
     }
 
     public void stopRepeater() {
@@ -100,7 +95,7 @@ public class StaticEffect {
     }
 
     public List<String> getInfo() {
-        List<String> info = new ArrayList<String>();
+        List<String> info = new ArrayList<>();
         info.add(ChatColor.translateAlternateColorCodes('&', "&3" + getId() + " &e" + Util.locationToString(effect.getLocation())));
         for (String key : effect.params.keySet()) {
             if (key.equalsIgnoreCase("id")) continue;

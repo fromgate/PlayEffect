@@ -50,7 +50,7 @@ public class Effects {
         return plg().u;
     }
 
-    private static List<StaticEffect> effects = new ArrayList<StaticEffect>();
+    private static List<StaticEffect> effects = new ArrayList<>();
 
     public static void stopAllEffects() {
         for (StaticEffect se : effects)
@@ -155,7 +155,7 @@ public class Effects {
     }
 
     public static Map<String, String> parseParams(String param) {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         String[] ln = param.trim().replaceAll(" +", " ").split(" ");
         if (ln.length == 0) return params;
         for (String str : ln) {
@@ -182,14 +182,14 @@ public class Effects {
     public static String getId(String effectid) {
         int idcount = 0;
         if (!effectid.isEmpty()) return effectid;
-        boolean found = false;
+        boolean found;
         do {
             found = false;
-            for (int i = 0; i < effects.size(); i++) {
-                if (effects.get(i).getId().equalsIgnoreCase("effect" + idcount)) {
+            for (StaticEffect effect : effects) {
+                if (effect.getId().equalsIgnoreCase("effect" + idcount)) {
                     found = true;
                     idcount++;
-                    break; // ?
+                    break;
                 }
             }
         } while (found);
@@ -200,7 +200,7 @@ public class Effects {
     public static void printEffectsList(CommandSender sender, int page, String id) {
         int lpp = 1000;
         if (sender instanceof Player) lpp = 15;
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (!effects.isEmpty()) {
             for (int i = 0; i < effects.size(); i++) {
                 StaticEffect se = effects.get(i);
@@ -214,8 +214,8 @@ public class Effects {
     }
 
     public static void printEffectsInfo(CommandSender sender, String numid) {
-        List<String> ln = new ArrayList<String>();
-        if (u().isIntegerGZ(numid)) {
+        List<String> ln = new ArrayList<>();
+        if (Util.isIntegerGZ(numid)) {
             int num = Integer.parseInt(numid);
             if (effects.size() <= num)
                 ln.addAll(effects.get(num - 1).getInfo());
@@ -258,7 +258,7 @@ public class Effects {
 
         VisualEffect ve;
         for (String uid : cfg.getKeys(false)) {
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             ConfigurationSection cs = cfg.getConfigurationSection(uid);
             for (String key : cs.getKeys(true))
                 params.put(key, cs.getString(key));
@@ -267,7 +267,6 @@ public class Effects {
             if (vestr.equalsIgnoreCase("TILECRACK")) vestr = "BLOCKCRACK"; // rename accordint 1.7 changes
             if (!VisualEffect.contains(vestr)) continue;
             ve = VisualEffect.valueOf(vestr);
-            if (ve == null) continue;
             if (ve == VisualEffect.BASIC) continue;
             BasicEffect be = Effects.createEffect(ve, params);
             if (be == null) continue;
@@ -309,7 +308,7 @@ public class Effects {
 
     public static void printAroundEffects(Player p, int radius) {
         Location loc = p.getLocation();
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (!effects.isEmpty())
             for (int x = loc.getBlockX() - radius; x <= loc.getBlockX() + radius; x++)
                 for (int y = loc.getBlockY() - radius; y <= loc.getBlockY() + radius; y++)

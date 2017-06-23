@@ -323,7 +323,7 @@ public enum Message {
                 fullFloat = true;
                 continue;
             } else if (keys[i] instanceof Double || keys[i] instanceof Float) {
-                if (!fullFloat) s = fmt.format((Double) keys[i]);
+                if (!fullFloat) s = fmt.format(keys[i]);
             }
 
             String from = (new StringBuilder("%").append(count).append("%")).toString();
@@ -407,7 +407,7 @@ public enum Message {
     }
 
     private static void saveMessages() {
-        Map<String, String> messages = new LinkedHashMap<String, String>();
+        Map<String, String> messages = new LinkedHashMap<>();
         for (Message msg : Message.values()) {
             messages.put(msg.name().toLowerCase(), msg.message);
         }
@@ -450,7 +450,7 @@ public enum Message {
 
     public static void printPage(Object sender, List<String> lines, Message title, Message footer, int pageNum, int linesPerPage) {
         if (lines == null || lines.isEmpty()) return;
-        List<String> page = new ArrayList<String>();
+        List<String> page = new ArrayList<>();
         if (title != null) page.add(title.message);
 
         int pageCount = lines.size() / linesPerPage + 1;

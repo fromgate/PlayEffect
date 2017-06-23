@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 
 @CmdDefine(command = "playeffect", description = Message.HLP_CHECK, permission = "playeffect.config",
-        subCommands = {"check"}, allowConsole = false, shortDescription = "&3/playeffect check [radius]")
+        subCommands = {"check"}, shortDescription = "&3/playeffect check [radius]")
 public class Check extends Cmd {
 
     @Override

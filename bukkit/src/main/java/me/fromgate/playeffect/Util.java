@@ -15,13 +15,7 @@ import java.util.*;
 
 
 public class Util {
-    private static PlayEffectPlugin plg;
-    private static Random random;
-
-    public static void init(PlayEffectPlugin plugin){
-        plg = plugin;
-        random = new Random();
-    }
+    private static Random random = new Random();
 
     public static String locationToString(Location loc) {
         if (loc == null) return "";
@@ -29,13 +23,13 @@ public class Util {
         String lstr = loc.toString();
         try {
             lstr = "[" + loc.getWorld().getName() + "] " + fmt.format(loc.getX()) + ", " + fmt.format(loc.getY()) + ", " + fmt.format(loc.getZ());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return lstr;
     }
 
     public static Location parseLocation(String strloc) {
-        Location loc = null;
+        Location loc;
         if (strloc.isEmpty()) return null;
         String[] ln = strloc.split(",");
         if (!((ln.length == 4) || (ln.length == 6))) return null;
@@ -54,16 +48,15 @@ public class Util {
 
     public static String locationToStrLoc(Location loc) {
         if (loc == null) return "";
-        StringBuilder sb = new StringBuilder(loc.getWorld().getName()).append(",");
-        sb.append(loc.getX()).append(",");
-        sb.append(loc.getY()).append(",");
-        sb.append(loc.getZ());
-        return sb.toString();
+        return loc.getWorld().getName() + "," +
+                loc.getX() + "," +
+                loc.getY() + "," +
+                loc.getZ();
     }
 
     public static List<Location> buildCircle(Location loc, int radius, double step) {
         if (step <= 0) return buildCircle(loc, radius);
-        List<Location> circle = new ArrayList<Location>();
+        List<Location> circle = new ArrayList<>();
         double a = loc.getX();
         double b = loc.getZ();
         for (double x = -radius + step * 2; x <= radius - step * 2; x += step) {
@@ -82,7 +75,7 @@ public class Util {
     }
 
     public static List<Location> buildCircle(Location loc, int radius) {
-        List<Location> circle = new ArrayList<Location>();
+        List<Location> circle = new ArrayList<>();
         if (loc == null) return circle;
         if (radius < 1) {
             circle.add(loc.getBlock().getLocation());
@@ -92,7 +85,7 @@ public class Util {
         int x = 0;
         int z = radius;
         int delta = 2 - 2 * radius;
-        int error = 0;
+        int error;
         for (; z >= 0; ) {
             circle.add(new Location(w, loc.getBlockX() + x, loc.getY(), loc.getBlockZ() + z));
             circle.add(new Location(w, loc.getBlockX() - x, loc.getY(), loc.getBlockZ() + z));
@@ -118,7 +111,7 @@ public class Util {
     }
 
     public static List<Location> buildPlain(Location loc1, Location loc2) {
-        List<Location> plain = new ArrayList<Location>();
+        List<Location> plain = new ArrayList<>();
         if (loc1 == null) return plain;
         if (loc2 == null) return plain;
         if (loc1.getBlock().equals(loc2.getBlock())) {
@@ -133,7 +126,7 @@ public class Util {
 
     public static List<Location> buildPlain(Location loc1, Location loc2, double step) {
         if (step <= 0) return buildPlain(loc1, loc2);
-        List<Location> plain = new ArrayList<Location>();
+        List<Location> plain = new ArrayList<>();
         if (loc1 == null) return plain;
         if (loc2 == null) return plain;
         if (loc1.getBlock().equals(loc2.getBlock())) {
@@ -150,7 +143,7 @@ public class Util {
 
     public static List<Location> buildLine(Location loc1, Location loc2, double step) {
         if (step == 0) return buildLine(loc1, loc2);
-        List<Location> line = new ArrayList<Location>();
+        List<Location> line = new ArrayList<>();
         if (loc1 == null) return line;
 
         line.add(loc1);
@@ -176,7 +169,7 @@ public class Util {
 
     public static List<Location> buildCuboid(Location loc1, Location loc2, boolean land, double step) {
         if (step <= 0) return buildCuboid(loc1, loc2, land);
-        List<Location> cube = new ArrayList<Location>();
+        List<Location> cube = new ArrayList<>();
         if (loc1 == null) return cube;
         if (loc2 == null) return cube;
         if (loc1.distance(loc2) < step) {
@@ -194,7 +187,7 @@ public class Util {
     }
 
     public static List<Location> buildCuboid(Location loc1, Location loc2, boolean land) {
-        List<Location> cube = new ArrayList<Location>();
+        List<Location> cube = new ArrayList<>();
         if (loc1 == null) return cube;
         if (loc2 == null) return cube;
         if (loc1.getBlock().equals(loc2.getBlock())) {
@@ -214,7 +207,7 @@ public class Util {
 
 
     public static List<Location> buildLine(Location loc1, Location loc2) {
-        List<Location> line = new ArrayList<Location>();
+        List<Location> line = new ArrayList<>();
         if (loc1 == null) return line;
         if (loc2 == null) return line;
         if (loc1.getBlock().equals(loc2.getBlock())) {
@@ -230,11 +223,11 @@ public class Util {
         int y2 = loc2.getBlockY();
         int z1 = loc1.getBlockZ();
         int z2 = loc2.getBlockZ();
-        int x = 0;
-        int y = 0;
-        int z = 0;
-        int i = 0;
-        int d = 1;
+        int x;
+        int y;
+        int z;
+        int i;
+        int d;
         switch (findHighest(dx, dy, dz)) {
             case 1:
                 i = 0;
@@ -289,7 +282,7 @@ public class Util {
         if (amount <= 0) return locs;
         if (locs.size() <= amount) return locs;
         locs = sort(locs);
-        List<Location> out = new ArrayList<Location>();
+        List<Location> out = new ArrayList<>();
         int step = locs.size() / amount;
         for (int i = locs.size() - 1; i >= 0; i = i - step) {
             out.add(locs.get(i));
@@ -319,7 +312,7 @@ public class Util {
     }
 
     public static Map<String, String> processLocation(CommandSender sender, Map<String, String> params) {
-        Map<String, String> newparams = new HashMap<String, String>();
+        Map<String, String> newparams = new HashMap<>();
         if (!params.containsKey("loc")) params.put("loc", "view");
         if (!params.containsKey("loc2")) params.put("loc2", "eye");
 
@@ -448,7 +441,7 @@ public class Util {
             enchant = istr.substring(istr.indexOf("@") + 1);
             istr = istr.substring(0, istr.indexOf("@"));
         }
-        int id = -1;
+        int id;
         int amount = 1;
         short data = 0;
         String[] si = istr.split("\\*");
@@ -527,7 +520,7 @@ public class Util {
 
     public static int getMinMaxRandom(String minmaxstr) {
         int min = 0;
-        int max = 0;
+        int max;
         String strmin = minmaxstr;
         String strmax = minmaxstr;
         if (minmaxstr.contains("-")) {

@@ -1,6 +1,6 @@
 /*  
  *  PlayEffect, Minecraft bukkit plugin
- *  (c)2013-2015, fromgate, fromgate@gmail.com
+ *  (c)2013-2017, fromgate, fromgate@gmail.com
  *  http://dev.bukkit.org/bukkit-plugins/playeffect/
  *    
  *  This file is part of PlayEffect.
@@ -22,7 +22,7 @@
 
 package me.fromgate.playeffect.effect;
 
-import me.fromgate.playeffect.PlayEffectPlugin;
+import me.fromgate.playeffect.Util;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -39,27 +39,45 @@ public class EffectSmoke extends BasicEffect {
 
     @Override
     protected void play(Location loc) {
-        World w = loc.getWorld();
-        if (this.param < 9) w.playEffect(loc, Effect.SMOKE, this.param);
-        else if (this.param == 9) for (int i = 0; i < 9; i++) w.playEffect(loc, Effect.SMOKE, i);
-        else if (this.param == 10) w.playEffect(loc, Effect.SMOKE, PlayEffectPlugin.instance.u.getRandomInt(9));
+        World world = loc.getWorld();
+        if (this.param < 9) {
+            world.playEffect(loc, Effect.SMOKE, this.param);
+        } else if (this.param == 9) {
+            for (int i = 0; i < 9; i++) world.playEffect(loc, Effect.SMOKE, i);
+        } else if (this.param == 10) {
+            world.playEffect(loc, Effect.SMOKE, Util.getRandomInt(9));
+        }
     }
 
 
     private int parseSmokeDirection(String dir_str) {
-        if (dir_str.equalsIgnoreCase("n") || dir_str.equalsIgnoreCase("north")) return 7;
-        if (dir_str.equalsIgnoreCase("nw") || dir_str.equalsIgnoreCase("northwest")) return 8;
-        if (dir_str.equalsIgnoreCase("ne") || dir_str.equalsIgnoreCase("northeast")) return 6;
-        if (dir_str.equalsIgnoreCase("s") || dir_str.equalsIgnoreCase("south")) return 1;
-        if (dir_str.equalsIgnoreCase("sw") || dir_str.equalsIgnoreCase("southwest")) return 2;
-        if (dir_str.equalsIgnoreCase("se") || dir_str.equalsIgnoreCase("southeast")) return 0;
-        if (dir_str.equalsIgnoreCase("w") || dir_str.equalsIgnoreCase("west")) return 5;
-        if (dir_str.equalsIgnoreCase("e") || dir_str.equalsIgnoreCase("east")) return 3;
-        if (dir_str.equalsIgnoreCase("calm") || dir_str.equalsIgnoreCase("up")) return 4;
-        if (dir_str.equalsIgnoreCase("all")) return 9;
-        if (dir_str.equalsIgnoreCase("rnd") || dir_str.equalsIgnoreCase("random")) return 10;
+        switch (dir_str.toLowerCase()) {
+            case "n":
+            case "north": return 7;
+            case "nw":
+            case "northwest": return 8;
+            case "ne":
+            case "northeast": return 6;
+            case"s":
+            case "south": return 1;
+            case"sw":
+            case "southwest": return 2;
+            case"se":
+            case "southeast": return 0;
+            case "w":
+            case "west": return 5;
+            case "e":
+            case "east": return 3;
+            case "calm":
+            case "up": return 4;
+            case "all": return 9;
+            case "rnd":
+            case "random": return 10;
+        }
         return 10;
     }
+
+
 
 
 }

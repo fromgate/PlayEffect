@@ -6,7 +6,7 @@ import me.fromgate.playeffect.common.Message;
 import org.bukkit.entity.Player;
 
 @CmdDefine(command = "playeffect", description = Message.HLP_WAND, permission = "playeffect.wand",
-        subCommands = {"wand"}, allowConsole = false, shortDescription = "&3/playeffect wand <effect> [param]")
+        subCommands = {"wand"}, shortDescription = "&3/playeffect wand <effect> [param]")
 public class WandCmd extends Cmd {
 // addCmd("wand", "wand", "hlp_wand","&3/playeffect wand <effect> [param]",'b'); // +
 

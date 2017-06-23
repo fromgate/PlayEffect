@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EffectQueue {
-    private static List<BasicEffect> queue = new ArrayList<BasicEffect>();
+    private static List<BasicEffect> queue = new ArrayList<>();
 
     public static void addToQueue(BasicEffect effect) {
         if (effect == null) return;
@@ -39,14 +39,11 @@ public class EffectQueue {
     }
 
     public static void init(final int ept, final int ttime) {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(PlayEffectPlugin.instance, new Runnable() {
-            @Override
-            public void run() {
-                if (queue.isEmpty()) return;
-                for (int i = 0; i < Math.min(ept, queue.size()); i++) {
-                    queue.get(0).playEffect();
-                    queue.remove(0);
-                }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(PlayEffectPlugin.instance, () -> {
+            if (queue.isEmpty()) return;
+            for (int i = 0; i < Math.min(ept, queue.size()); i++) {
+                queue.get(0).playEffect();
+                queue.remove(0);
             }
         }, 20, ttime);
     }

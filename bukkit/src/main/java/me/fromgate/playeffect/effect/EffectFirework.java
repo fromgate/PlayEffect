@@ -2,6 +2,7 @@ package me.fromgate.playeffect.effect;
 
 import me.fromgate.playeffect.EffectColor;
 import me.fromgate.playeffect.PlayEffectPlugin;
+import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.nms.NmsEffects;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -21,7 +22,7 @@ public class EffectFirework extends BasicEffect {
         if (ftstr.equalsIgnoreCase("random")) ftypernd = true;
         try {
             if (ftstr.equalsIgnoreCase("random"))
-                ftype = FireworkEffect.Type.values()[PlayEffectPlugin.instance.u.getRandomInt(FireworkEffect.Type.values().length)];
+                ftype = FireworkEffect.Type.values()[Util.getRandomInt(FireworkEffect.Type.values().length)];
             else ftype = FireworkEffect.Type.valueOf(ftstr.toUpperCase());
         } catch (Exception e) {
             ftype = FireworkEffect.Type.BALL;
@@ -34,14 +35,11 @@ public class EffectFirework extends BasicEffect {
     @Override
     protected void play(final Location loc) {
         if (ftypernd)
-            ftype = FireworkEffect.Type.values()[PlayEffectPlugin.instance.u.getRandomInt(FireworkEffect.Type.values().length)];
+            ftype = FireworkEffect.Type.values()[Util.getRandomInt(FireworkEffect.Type.values().length)];
         if (colorrnd) color = EffectColor.getBukkitColor("RANDOM");
-        Bukkit.getScheduler().runTaskLater(PlayEffectPlugin.instance, new Runnable() {
-            @Override
-            public void run() {
-                FireworkEffect fe = FireworkEffect.builder().with(ftype).withColor(color).flicker(true).build();
-                NmsEffects.playFirework(loc, fe);
-            }
+        Bukkit.getScheduler().runTaskLater(PlayEffectPlugin.instance, () -> {
+            FireworkEffect fe = FireworkEffect.builder().with(ftype).withColor(color).flicker(true).build();
+            NmsEffects.playFirework(loc, fe);
         }, 1);
 
     }

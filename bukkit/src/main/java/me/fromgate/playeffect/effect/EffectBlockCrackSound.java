@@ -22,6 +22,7 @@
 
 package me.fromgate.playeffect.effect;
 
+import me.fromgate.playeffect.Util;
 import me.fromgate.playeffect.common.Message;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -35,7 +36,7 @@ public class EffectBlockCrackSound extends BasicEffect {
     public void onInit() {
         String blockStr = getParam("item", "");
         if (blockStr.isEmpty()) blockStr = getParam("block", "GLASS:0");
-        block = u().parseItemStack(blockStr);
+        block = Util.parseItemStack(blockStr);
     }
 
     @Override

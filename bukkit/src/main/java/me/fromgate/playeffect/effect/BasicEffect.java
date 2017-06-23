@@ -45,14 +45,14 @@ public abstract class BasicEffect {
     private Long freq = 0L;
     private BukkitTask task;
 
-    Map<String, String> params = new HashMap<String, String>();
+    Map<String, String> params = new HashMap<>();
 
     private int radius = 0; // radius:X
     private int amount = -1;
     private int chance = 100;
     private boolean land = false; // land:true
 
-    private List<Location> cache = new ArrayList<Location>();
+    private List<Location> cache = new ArrayList<>();
 
     DrawType drawtype = DrawType.NORMAL;
     private Location loc;
@@ -94,7 +94,7 @@ public abstract class BasicEffect {
 
 
     private List<Location> getDrawLocations() {
-        List<Location> locs = new ArrayList<Location>();
+        List<Location> locs = new ArrayList<>();
         switch (drawtype) {
             case NORMAL:
                 locs.add(this.randomizeLocation());
@@ -126,7 +126,7 @@ public abstract class BasicEffect {
     }
 
     private List<Location> buildCuboid(Location loc1, Location loc2, boolean land) {
-        if (cache.isEmpty()) cache = Util.buildCuboid(loc, loc2, land);
+        if (cache.isEmpty()) cache = Util.buildCuboid(loc1, loc2, land);
         return cache;
     }
 
@@ -136,7 +136,7 @@ public abstract class BasicEffect {
     }
 
     private boolean rollDice() {
-        return PlayEffectPlugin.instance.u.rollDiceChance(this.chance);
+        return Util.rollDiceChance(this.chance);
     }
 
     public void playEffect() {
@@ -153,12 +153,7 @@ public abstract class BasicEffect {
         if (System.currentTimeMillis() > ttl) return;
         playSingleEffect();
         if ((task == null) || (!Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId()))) {
-            task = Bukkit.getScheduler().runTaskLater(PlayEffectPlugin.instance, new Runnable() {
-                @Override
-                public void run() {
-                    playMultipleEffect();
-                }
-            }, this.freq);
+            task = Bukkit.getScheduler().runTaskLater(PlayEffectPlugin.instance, this::playMultipleEffect, this.freq);
         }
     }
 
@@ -207,7 +202,7 @@ public abstract class BasicEffect {
             }
 
             if (!cache.isEmpty()) {
-                l = cache.get(PlayEffectPlugin.instance.u.getRandomInt(cache.size()));
+                l = cache.get(Util.getRandomInt(cache.size()));
             }
         }
         return l;
@@ -215,13 +210,13 @@ public abstract class BasicEffect {
 
     @Override
     public String toString() {
-        String param = "";
+        StringBuilder param = new StringBuilder();
         for (String pstr : this.params.keySet()) {
             if (pstr.equalsIgnoreCase("id")) continue;
             if (pstr.equalsIgnoreCase("effect")) continue;
             if (!type.isValidParam(pstr)) continue;
-            if (param.isEmpty()) param = pstr + ":" + params.get(pstr);
-            else param = param + ", " + pstr + ":" + params.get(pstr);
+            if (param.length() == 0) param = new StringBuilder(pstr + ":" + params.get(pstr));
+            else param.append(", ").append(pstr).append(":").append(params.get(pstr));
         }
         return this.type.name() + " " + Util.locationToString(loc);
     }

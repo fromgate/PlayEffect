@@ -92,7 +92,7 @@ public class WEGLib {
     }
 
     public List<Location> getRegionMinMaxLocations(String rg) {
-        List<Location> locs = new ArrayList<Location>();
+        List<Location> locs = new ArrayList<>();
         if (!wgconnected) return locs;
         ProtectedRegion prg = null;
         World world = null;
@@ -111,7 +111,7 @@ public class WEGLib {
     }
 
     public static List<Location> getRegionLocations(String rg, boolean land) {
-        List<Location> locs = new ArrayList<Location>();
+        List<Location> locs = new ArrayList<>();
         if (!wgconnected) return locs;
         ProtectedRegion prg = null;
         World world = null;
@@ -138,7 +138,7 @@ public class WEGLib {
     }
 
     public static List<Location> getSelectionLocations(Player p) {
-        List<Location> locs = new ArrayList<Location>();
+        List<Location> locs = new ArrayList<>();
         if (!weconnected) return locs;
         Selection sel = worldedit.getSelection(p);
         if (sel == null) return locs;
